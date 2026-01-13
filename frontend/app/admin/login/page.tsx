@@ -28,10 +28,16 @@ export default function AdminLoginPage() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        router.push('/admin/dashboard');
+        try {
+          document.cookie = 'ijps_admin_auth=true; path=/; max-age=86400; samesite=lax';
+          if (data.username) {
+            document.cookie = `ijps_admin_user=${encodeURIComponent(data.username)}; path=/; max-age=86400; samesite=lax`;
+          }
+        } catch {}
+        router.push('/dashboard');
         router.refresh();
       } else {
-        setError(data.message || 'Credenciais inválidas');
+        setError(data.message || `Falha no login (status ${res.status})`);
       }
     } catch (err) {
       setError('Erro ao conectar ao servidor');
