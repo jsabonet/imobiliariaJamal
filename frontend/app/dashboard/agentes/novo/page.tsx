@@ -7,6 +7,8 @@ import Input from '@/components/ui/Input';
 import { useRouter } from 'next/navigation';
 import { FiUpload, FiX, FiUser } from 'react-icons/fi';
 
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function NovoAgentePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -53,7 +55,7 @@ export default function NovoAgentePage() {
       if (formData.whatsapp) data.append('whatsapp', formData.whatsapp);
       if (photoFile) data.append('photo', photoFile);
 
-      const response = await fetch('http://localhost:8000/api/agents/', {
+      const response = await fetch(`${API_URL}/api/agents/`, {
         method: 'POST',
         body: data,
       });

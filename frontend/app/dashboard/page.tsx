@@ -7,6 +7,7 @@ import { FiHome, FiFileText, FiMail, FiTrendingUp, FiUsers } from 'react-icons/f
 import { fetchProperties, fetchEvaluations, fetchContacts } from '@/lib/api';
 
 export default function DashboardPage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const [stats, setStats] = useState({
     properties: 0,
     evaluations: 0,
@@ -23,7 +24,7 @@ export default function DashboardPage() {
           fetchProperties({}),
           fetchEvaluations(),
           fetchContacts(),
-          fetch('http://localhost:8000/api/agents/'),
+          fetch(`${API_URL}/api/agents/`),
         ]);
 
         const agentsData = await agentsResponse.json();

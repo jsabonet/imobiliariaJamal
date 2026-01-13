@@ -16,6 +16,7 @@ interface Agent {
 }
 
 export default function AgentesPage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const router = useRouter();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +29,7 @@ export default function AgentesPage() {
 
   async function loadAgents() {
     try {
-      const response = await fetch('http://localhost:8000/api/agents/');
+      const response = await fetch(`${API_URL}/api/agents/`);
       const data = await response.json();
       setAgents(data.results || data || []);
     } catch (error) {
@@ -40,7 +41,7 @@ export default function AgentesPage() {
 
   async function handleDelete(id: number) {
     try {
-      const response = await fetch(`http://localhost:8000/api/agents/${id}/`, {
+      const response = await fetch(`${API_URL}/api/agents/${id}/`, {
         method: 'DELETE',
       });
 

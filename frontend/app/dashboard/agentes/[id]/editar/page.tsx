@@ -16,6 +16,8 @@ interface Agent {
   photo: string | null;
 }
 
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function EditarAgentePage() {
   const router = useRouter();
   const params = useParams();
@@ -39,7 +41,7 @@ export default function EditarAgentePage() {
 
   async function loadAgent() {
     try {
-      const response = await fetch(`http://localhost:8000/api/agents/${agentId}/`);
+      const response = await fetch(`${API_URL}/api/agents/${agentId}/`);
       const data: Agent = await response.json();
       
       setFormData({
@@ -101,7 +103,7 @@ export default function EditarAgentePage() {
         data.append('photo', '');
       }
 
-      const response = await fetch(`http://localhost:8000/api/agents/${agentId}/`, {
+      const response = await fetch(`${API_URL}/api/agents/${agentId}/`, {
         method: 'PUT',
         body: data,
       });

@@ -6,6 +6,8 @@ import { fetchProperties, Property } from '@/lib/api';
 import { FiEdit, FiTrash2, FiPlus, FiEye } from 'react-icons/fi';
 import Link from 'next/link';
 
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function PropriedadesPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,7 @@ export default function PropriedadesPage() {
     if (!confirm('Tem certeza que deseja deletar esta propriedade?')) return;
     
     try {
-      const response = await fetch(`http://localhost:8000/api/properties/${id}/`, {
+      const response = await fetch(`${API_URL}/api/properties/${id}/`, {
         method: 'DELETE',
       });
 

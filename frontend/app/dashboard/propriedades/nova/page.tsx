@@ -9,6 +9,8 @@ import Button from '@/components/ui/Button';
 import { createProperty } from '@/lib/api';
 import { FiSave, FiX, FiChevronDown, FiChevronUp, FiHome, FiMapPin, FiDollarSign, FiGrid, FiStar, FiSettings, FiImage, FiLock } from 'react-icons/fi';
 
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function NovaPropriedadePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -109,7 +111,7 @@ export default function NovaPropriedadePage() {
   useEffect(() => {
     async function loadAgents() {
       try {
-        const response = await fetch('http://localhost:8000/api/agents/');
+        const response = await fetch(`${API_URL}/api/agents/`);
         const data = await response.json();
         setAgents(data.results || data || []);
       } catch (err) {
@@ -214,7 +216,7 @@ export default function NovaPropriedadePage() {
       });
       
       // Enviar para API
-      const response = await fetch('http://localhost:8000/api/properties/', {
+      const response = await fetch(`${API_URL}/api/properties/`, {
         method: 'POST',
         body: formDataToSend,
         // NÃO definir Content-Type - o browser faz isso automaticamente com boundary correto

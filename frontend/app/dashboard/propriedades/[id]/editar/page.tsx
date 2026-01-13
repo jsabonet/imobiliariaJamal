@@ -119,7 +119,7 @@ export default function EditarPropriedadePage() {
   useEffect(() => {
     async function loadAgents() {
       try {
-        const response = await fetch('http://localhost:8000/api/agents/');
+        const response = await fetch(`${API_URL}/api/agents/`);
         const data = await response.json();
         setAgents(data.results || data || []);
       } catch (err) {
@@ -223,7 +223,7 @@ export default function EditarPropriedadePage() {
     const loadPropertyData = async () => {
       try {
         setLoadingData(true);
-        const response = await fetch(`http://localhost:8000/api/properties/${propertyId}/`);
+        const response = await fetch(`${API_URL}/api/properties/${propertyId}/`);
         
         if (!response.ok) {
           throw new Error('Erro ao carregar propriedade');
@@ -344,7 +344,7 @@ export default function EditarPropriedadePage() {
       });
       
       // PATCH para atualizar propriedade existente (parcial)
-      const response = await fetch(`http://localhost:8000/api/properties/${propertyId}/`, {
+      const response = await fetch(`${API_URL}/api/properties/${propertyId}/`, {
         method: 'PATCH',
         body: formDataToSend,
         // NÃO definir Content-Type - o browser faz isso automaticamente com boundary correto
