@@ -39,3 +39,34 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 		output file /var/log/caddy/access.log
 	}
 }
+
+# Fallback para acesso por IP (sem hostname), útil para testes
+:80 {
+	encode gzip
+
+	# API
+	handle_path /api/* {
+		reverse_proxy backend:8000
+	}
+
+	# Frontend
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
+
+# HTTPS por IP com certificado interno (não será confiável pelo browser)
+:443 {
+	tls internal
+	encode gzip
+
+	# API
+	handle_path /api/* {
+		reverse_proxy backend:8000
+	}
+
+	# Frontend
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
