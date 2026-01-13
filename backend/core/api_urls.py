@@ -16,5 +16,5 @@ router.register(r'contacts', ContactMessageViewSet, basename='contact')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('admin-auth/', admin_auth, name='admin-auth'),
+    path('admin/auth/', admin_auth, name='admin-auth'),
 ]
