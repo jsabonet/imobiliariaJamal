@@ -27,8 +27,8 @@ export default function AdminLoginPage() {
 
       const data = await res.json();
 
-      if (data.success) {
-        router.push('/dashboard');
+      if (res.ok && data.success) {
+        router.push('/admin/dashboard');
         router.refresh();
       } else {
         setError(data.message || 'Credenciais inválidas');

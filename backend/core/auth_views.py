@@ -15,7 +15,7 @@ def admin_auth(request):
     
     if not username or not password:
         return Response(
-            {'error': 'Username e password são obrigatórios'},
+            {'success': False, 'message': 'Username e password são obrigatórios'},
             status=status.HTTP_400_BAD_REQUEST
         )
     
@@ -32,6 +32,6 @@ def admin_auth(request):
         })
     else:
         return Response(
-            {'error': 'Credenciais inválidas ou usuário sem permissão administrativa'},
+            {'success': False, 'message': 'Credenciais inválidas ou usuário sem permissão administrativa'},
             status=status.HTTP_401_UNAUTHORIZED
         )
