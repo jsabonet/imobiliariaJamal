@@ -18,6 +18,7 @@ export default function EditarPropriedadePage() {
   const router = useRouter();
   const params = useParams();
   const propertyId = params.id as string;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState('');
