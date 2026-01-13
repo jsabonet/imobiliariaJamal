@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const { username, password } = await request.json();
 
     // Tentar autenticar no backend Django
-    const response = await fetch(`${API_URL}/admin-auth/`, {
+    const response = await fetch(`${API_URL}/admin/auth/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
