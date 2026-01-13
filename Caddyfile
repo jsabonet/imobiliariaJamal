@@ -10,20 +10,36 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 	encode gzip
 
 	# Backend API (sem remover prefixo /api)
-	@api path /api/*
-	reverse_proxy @api backend:8000
+	@api path /api*
+	reverse_proxy @api backend:8000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up Host {host}
+	}
 
 	# Django Admin (sem remover prefixo /admin)
 	@admin path /admin*
-	reverse_proxy @admin backend:8000
+	reverse_proxy @admin backend:8000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up Host {host}
+	}
 
 	# Media files (uploads)
-	@media path /media/*
-	reverse_proxy @media backend:8000
+	@media path /media*
+	reverse_proxy @media backend:8000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up Host {host}
+	}
 
 	# Static files
-	@static path /static/*
-	reverse_proxy @static backend:8000
+	@static path /static*
+	reverse_proxy @static backend:8000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up Host {host}
+	}
 
 	# Frontend (Next.js) - restante tráfego
 	reverse_proxy frontend:3000
@@ -39,8 +55,20 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 	encode gzip
 
 	# API
-	@api path /api/*
-	reverse_proxy @api backend:8000
+	@api path /api*
+	reverse_proxy @api backend:8000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up Host {host}
+	}
+
+	# Admin
+	@admin path /admin*
+	reverse_proxy @admin backend:8000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up Host {host}
+	}
 
 	# Frontend
 	reverse_proxy frontend:3000
@@ -52,8 +80,20 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 	encode gzip
 
 	# API
-	@api path /api/*
-	reverse_proxy @api backend:8000
+	@api path /api*
+	reverse_proxy @api backend:8000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up Host {host}
+	}
+
+	# Admin
+	@admin path /admin*
+	reverse_proxy @admin backend:8000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up Host {host}
+	}
 
 	# Frontend
 	reverse_proxy frontend:3000
