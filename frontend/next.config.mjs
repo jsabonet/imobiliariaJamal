@@ -1,6 +1,31 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  
+  // Rewrite API calls to Django backend
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL 
+          ? `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`
+          : 'http://127.0.0.1:8000/api/:path*',
+      },
+      {
+        source: '/media/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL 
+          ? `${process.env.NEXT_PUBLIC_API_URL}/media/:path*`
+          : 'http://127.0.0.1:8000/media/:path*',
+      },
+      {
+        source: '/static/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL 
+          ? `${process.env.NEXT_PUBLIC_API_URL}/static/:path*`
+          : 'http://127.0.0.1:8000/static/:path*',
+      },
+    ];
+  },
+  
   images: {
     remotePatterns: [
       {
