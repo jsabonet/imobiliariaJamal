@@ -1,6 +1,10 @@
 from django.contrib import admin
 from .models import Agent, Property, PropertyImage, PropertyDocument, EvaluationRequest, ContactMessage
 
+admin.site.site_header = "Imobiliária Jamal Administração"
+admin.site.site_title = "Imobiliária Jamal"
+admin.site.index_title = "Painel de Gestão"
+
 class PropertyImageInline(admin.TabularInline):
     model = PropertyImage
     extra = 1

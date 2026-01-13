@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Imobiliária Jamal{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}">Imobiliária Jamal Administração</a>
+  </div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
