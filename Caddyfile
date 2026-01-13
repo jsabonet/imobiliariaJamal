@@ -17,14 +17,6 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 		header_up Host {host}
 	}
 
-	# Django Admin (sem remover prefixo /admin)
-	@admin path /admin*
-	reverse_proxy @admin backend:8000 {
-		header_up X-Forwarded-Proto {scheme}
-		header_up X-Forwarded-Host {host}
-		header_up Host {host}
-	}
-
 	# Media files (uploads)
 	@media path /media*
 	reverse_proxy @media backend:8000 {
@@ -57,14 +49,6 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 	# API
 	@api path /api*
 	reverse_proxy @api backend:8000 {
-		header_up X-Forwarded-Proto {scheme}
-		header_up X-Forwarded-Host {host}
-		header_up Host {host}
-	}
-
-	# Admin
-	@admin path /admin*
-	reverse_proxy @admin backend:8000 {
 		header_up X-Forwarded-Proto {scheme}
 		header_up X-Forwarded-Host {host}
 		header_up Host {host}
