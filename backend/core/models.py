@@ -1,0 +1,241 @@
+"""
+Modelos de dados para a plataforma IJPS - Imobiliária Jamal
+
+Define as entidades principais:
+- Agent: Agentes imobiliários
+- Property: Propriedades/imóveis
+- PropertyImage: Imagens das propriedades
+- EvaluationRequest: Solicitações de avaliação
+- ContactMessage: Mensagens de contacto
+"""
+
+from django.db import models
+
+
+class Agent(models.Model):
+    """Modelo para representar agentes imobiliários da IJPS"""
+    name = models.CharField(max_length=120, verbose_name="Nome")
+    email = models.EmailField(blank=True, null=True, verbose_name="Email")
+    phone = models.CharField(max_length=30, verbose_name="Telefone")
+    whatsapp = models.CharField(max_length=30, blank=True, null=True, verbose_name="WhatsApp")
+    photo = models.ImageField(upload_to='agents/', blank=True, null=True, verbose_name="Foto")
+
+    class Meta:
+        verbose_name = "Agente"
+        verbose_name_plural = "Agentes"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class Property(models.Model):
+    """Modelo para representar propriedades/imóveis"""
+    
+    TYPE_CHOICES = [
+        ('apartamento', 'Apartamento'),
+        ('apartamento_em_condominio', 'Apartamento em Condomínio'),
+        ('casa', 'Casa'),
+        ('terreno', 'Terreno'),
+        ('comercial', 'Comercial'),
+        ('empreendimento', 'Empreendimento'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('venda', 'Venda'),
+        ('arrendamento', 'Arrendamento'),
+    ]
+
+    CURRENCY_CHOICES = [
+        ('MZN', 'Metical Moçambicano'),
+        ('USD', 'Dólar Americano'),
+        ('EUR', 'Euro'),
+        ('ZAR', 'Rand Sul-Africano'),
+    ]
+
+    LEGAL_STATUS_CHOICES = [
+        ('duat', 'DUAT (Direito de Uso e Aproveitamento da Terra)'),
+        ('direito_uso', 'Direito de Uso'),
+        ('escritura', 'Escritura Pública'),
+        ('regularizacao', 'Em Regularização'),
+        ('concessao', 'Concessão'),
+    ]
+
+    # Informações básicas
+    title = models.CharField(max_length=200, verbose_name="Título")
+    description = models.TextField(verbose_name="Descrição")
+    reference_code = models.CharField(max_length=50, blank=True, null=True, verbose_name="Código de Referência")
+    location = models.CharField(max_length=200, verbose_name="Localização")
+    
+    # Endereço detalhado
+    address = models.CharField(max_length=300, blank=True, null=True, verbose_name="Endereço")
+    city = models.CharField(max_length=100, blank=True, null=True, verbose_name="Cidade")
+    neighborhood = models.CharField(max_length=100, blank=True, null=True, verbose_name="Bairro")
+    province = models.CharField(max_length=100, blank=True, null=True, verbose_name="Província")
+    district = models.CharField(max_length=100, blank=True, null=True, verbose_name="Distrito")
+    country = models.CharField(max_length=100, default='Moçambique', verbose_name="País")
+    zip_code = models.CharField(max_length=20, blank=True, null=True, verbose_name="Código Postal")
+    latitude = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True, verbose_name="Latitude")
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True, verbose_name="Longitude")
+    
+    # Preço e custos
+    price = models.DecimalField(max_digits=14, decimal_places=2, verbose_name="Preço")
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='MZN', verbose_name="Moeda")
+    condominium_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="Condomínio (por mês)")
+    ipra = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="IPRA (Imposto Predial Anual)")
+    iptu = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="IPTU/Imposto Anual (DEPRECADO)")
+    monthly_expenses = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="Despesas Mensais")
+    
+    # Tipo e status
+    type = models.CharField(max_length=30, choices=TYPE_CHOICES, verbose_name="Tipo")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Status")
+    legal_status = models.CharField(max_length=20, choices=LEGAL_STATUS_CHOICES, blank=True, null=True, verbose_name="Situação Legal")
+    
+    # Características principais
+    bedrooms = models.PositiveIntegerField(default=0, verbose_name="Quartos")
+    suites = models.PositiveIntegerField(default=0, verbose_name="Suites")
+    bathrooms = models.PositiveIntegerField(default=0, verbose_name="Casas de Banho Completas")
+    toilets = models.PositiveIntegerField(default=0, verbose_name="WC/Lavabos")
+    area = models.PositiveIntegerField(default=0, help_text='m²', verbose_name="Área Total")
+    useful_area = models.PositiveIntegerField(blank=True, null=True, help_text='m²', verbose_name="Área Útil")
+    land_area = models.PositiveIntegerField(blank=True, null=True, help_text='m²', verbose_name="Área do Terreno")
+    parking_spaces = models.PositiveIntegerField(default=0, verbose_name="Vagas de Estacionamento")
+    
+    # Detalhes do imóvel
+    year_built = models.PositiveIntegerField(blank=True, null=True, verbose_name="Ano de Construção")
+    floor_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Andar")
+    total_floors = models.PositiveIntegerField(blank=True, null=True, verbose_name="Total de Andares")
+    
+    # Detalhes técnicos
+    property_condition = models.CharField(max_length=50, blank=True, null=True, verbose_name="Estado de Conservação")
+    orientation = models.CharField(max_length=20, blank=True, null=True, verbose_name="Orientação Solar")
+    energy_class = models.CharField(max_length=10, blank=True, null=True, verbose_name="Classe Energética")
+    heating_type = models.CharField(max_length=50, blank=True, null=True, verbose_name="Sistema de Aquecimento")
+    
+    # Flags e características
+    furnished = models.BooleanField(default=False, verbose_name="Mobilado")
+    accepts_pets = models.BooleanField(default=False, verbose_name="Aceita Animais")
+    accepts_financing = models.BooleanField(default=False, verbose_name="Aceita Financiamento")
+    is_featured = models.BooleanField(default=False, verbose_name="Destaque")
+    is_verified = models.BooleanField(default=False, verbose_name="Verificado")
+    
+    # Disponibilidade
+    availability_date = models.DateField(blank=True, null=True, verbose_name="Data de Disponibilidade")
+    
+    # Notas internas
+    internal_notes = models.TextField(blank=True, null=True, verbose_name="Observações Internas")
+    
+    # Comodidades (JSON)
+    amenities = models.JSONField(
+        default=list, 
+        blank=True, 
+        verbose_name="Comodidades",
+        help_text="Lista de comodidades como ['garagem', 'piscina', 'jardim']"
+    )
+    
+    # Relações
+    agent = models.ForeignKey(
+        Agent, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name='properties',
+        verbose_name="Agente"
+    )
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Atualizado em")
+
+    class Meta:
+        verbose_name = "Propriedade"
+        verbose_name_plural = "Propriedades"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class PropertyImage(models.Model):
+    """Modelo para imagens de propriedades"""
+    property = models.ForeignKey(
+        Property, 
+        on_delete=models.CASCADE, 
+        related_name='images',
+        verbose_name="Propriedade"
+    )
+    image = models.ImageField(upload_to='properties/', verbose_name="Imagem")
+    is_primary = models.BooleanField(default=False, verbose_name="Imagem Principal")
+    order = models.PositiveIntegerField(default=0, verbose_name="Ordem")
+
+    class Meta:
+        verbose_name = "Imagem da Propriedade"
+        verbose_name_plural = "Imagens das Propriedades"
+        ordering = ['-is_primary', 'order', 'id']
+
+    def __str__(self):
+        return f"Imagem {self.order} - {self.property.title}"
+
+
+class PropertyDocument(models.Model):
+    """Modelo para documentos de propriedades"""
+    property = models.ForeignKey(
+        Property, 
+        on_delete=models.CASCADE, 
+        related_name='documents',
+        verbose_name="Propriedade"
+    )
+    document = models.FileField(upload_to='properties/documents/', verbose_name="Documento")
+    name = models.CharField(max_length=255, blank=True, verbose_name="Nome do Documento")
+    document_type = models.CharField(max_length=100, blank=True, verbose_name="Tipo de Documento")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Enviado em")
+
+    class Meta:
+        verbose_name = "Documento da Propriedade"
+        verbose_name_plural = "Documentos das Propriedades"
+        ordering = ['uploaded_at']
+
+    def __str__(self):
+        return f"Documento - {self.property.title} ({self.name or 'Sem nome'})"
+
+
+class EvaluationRequest(models.Model):
+    """Modelo para solicitações de avaliação de imóveis"""
+    name = models.CharField(max_length=120, verbose_name="Nome")
+    email = models.EmailField(verbose_name="Email")
+    phone = models.CharField(max_length=30, verbose_name="Telefone")
+    property_type = models.CharField(max_length=50, verbose_name="Tipo de Propriedade")
+    location = models.CharField(max_length=200, verbose_name="Localização")
+    details = models.TextField(blank=True, verbose_name="Detalhes")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
+
+    class Meta:
+        verbose_name = "Solicitação de Avaliação"
+        verbose_name_plural = "Solicitações de Avaliação"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Avaliação - {self.name} ({self.location})"
+
+
+class ContactMessage(models.Model):
+    """Modelo para mensagens de contacto"""
+    name = models.CharField(max_length=120, verbose_name="Nome")
+    email = models.EmailField(blank=True, null=True, verbose_name="Email")
+    phone = models.CharField(max_length=30, verbose_name="Telefone")
+    message = models.TextField(verbose_name="Mensagem")
+    property = models.ForeignKey(
+        Property, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        verbose_name="Propriedade"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
+
+    class Meta:
+        verbose_name = "Mensagem de Contacto"
+        verbose_name_plural = "Mensagens de Contacto"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Contacto - {self.name}"
