@@ -14,7 +14,6 @@ urlpatterns = [
     path('api/', include('core.api_urls')),  # API REST endpoints
 ]
 
-# Servir arquivos de media em desenvolvimento
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# Servir arquivos de media e estáticos (em produção inicial via Django)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

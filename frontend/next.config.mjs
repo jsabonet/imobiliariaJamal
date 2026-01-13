@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -10,6 +11,13 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
+        port: '8000',
+        pathname: '/media/**',
+      },
+      // Internal Docker network hostname for backend
+      {
+        protocol: 'http',
+        hostname: 'backend',
         port: '8000',
         pathname: '/media/**',
       },

@@ -391,3 +391,71 @@ Desenvolvido por Zawadi Digital. Todos os direitos reservados.
 Obrigado por escolher trabalhar com a Zawadi Digital!
 
 **Vamos construir o futuro do mercado imobiliário digital em Moçambique juntos! 🚀🏠**
+
+---
+
+## 🐳 Deploy com Docker (DigitalOcean)
+
+Este repositório está preparado para deploy com Docker utilizando `docker-compose`, incluindo:
+- Frontend (Next.js) em `frontend/`
+- Backend (Django + DRF) em `backend/`
+- Base de dados PostgreSQL
+
+### 1) Pré-requisitos no Droplet
+
+- Docker e Docker Compose Plugin instalados
+
+```bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release; echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo usermod -aG docker $USER
+# faça logout/login novamente para aplicar o grupo
+```
+
+### 2) Configurar variáveis de ambiente
+
+Crie um arquivo `.env` na raiz (veja `.env.example`) com:
+
+```
+POSTGRES_DB=ijps_db
+POSTGRES_USER=ijps_user
+POSTGRES_PASSWORD=troque-por-uma-senha-forte
+
+DJANGO_SECRET_KEY=troque-por-uma-chave-forte
+DJANGO_ALLOWED_HOSTS=seu.dominio,backend,localhost,127.0.0.1
+DJANGO_CORS_ORIGINS=https://seu.dominio,http://localhost:3000
+
+NEXT_PUBLIC_API_URL=http://backend:8000/api
+```
+
+### 3) Build e subida dos serviços
+
+```bash
+docker compose up -d --build
+```
+
+- Frontend disponível em `http://SEU_IP:3000`
+- Backend API em `http://SEU_IP:8000/api`
+
+### 4) (Opcional) Proxy reverso + SSL
+
+Para produção, recomenda-se colocar um proxy reverso (Nginx ou Caddy) em frente ao frontend na porta 80/443 para TLS. É possível adicionar um serviço de proxy ao `docker-compose.yml` apontando para `frontend:3000`.
+
+### 5) Operações úteis
+
+```bash
+docker compose logs -f backend      # Ver logs do backend
+docker compose logs -f frontend     # Ver logs do frontend
+docker compose ps                   # Ver estado dos serviços
+docker compose down                 # Parar e remover serviços
+```
+
+### Notas técnicas
+- O Next.js é construído com `output: 'standalone'` e servido com Node (`server.js`) na porta 3000.
+- O Django inicia com `gunicorn` na porta 8000 e executa `migrate` + `collectstatic` automaticamente.
+- Arquivos de media são persistidos no volume `media_data` e servidos pelo Django em `/media/`.

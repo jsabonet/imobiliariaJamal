@@ -244,7 +244,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           {/* Main Image */}
           <div className="relative h-[300px] md:h-[500px] rounded-xl overflow-hidden mb-4">
             <Image
-              src={property.images[currentImageIndex]}
+              src={property.images[currentImageIndex] as string}
               alt={property.title}
               fill
               className="object-cover"
@@ -272,7 +272,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
           {/* Thumbnails */}
           <div className="grid grid-cols-4 gap-4">
-            {property.images.map((image, index) => (
+            {property.images.map((image: string, index: number) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
@@ -313,9 +313,9 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                         </Badge>
                       )}
                       <Badge>{property.type}</Badge>
-                      <Badge variant="outline">{property.status === 'venda' ? 'Venda' : 'Arrendamento'}</Badge>
+                      <Badge variant="info">{property.status === 'venda' ? 'Venda' : 'Arrendamento'}</Badge>
                       {property.referenceCode && (
-                        <Badge variant="outline">Ref: {property.referenceCode}</Badge>
+                        <Badge variant="info">Ref: {property.referenceCode}</Badge>
                       )}
                     </div>
                     <h1 className="text-3xl md:text-4xl font-bold text-secondary mb-3">
@@ -456,7 +456,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               <div className="p-6">
                 <h2 className="text-2xl font-bold text-secondary mb-4">Características</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {property.features.map((feature, index) => (
+                  {property.features.map((feature: string, index: number) => (
                     <div key={index} className="flex items-center gap-2">
                       <span className="text-accent-500">✓</span>
                       <span className="text-gray-700">{feature}</span>
