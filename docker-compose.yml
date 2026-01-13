@@ -41,7 +41,7 @@ services:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://imobiliariajamal.com}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://imobiliariajamal.com/api}
     environment:
       NODE_ENV: production
     depends_on:
