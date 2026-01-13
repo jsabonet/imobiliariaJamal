@@ -10,7 +10,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Admin Django comentado - usando /admin/login do Next.js frontend
+    # path('admin/', admin.site.urls),
     path('api/', include('core.api_urls')),  # API REST endpoints
 ]
 
