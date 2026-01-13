@@ -9,30 +9,24 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 	# Gzip compression
 	encode gzip
 
-	# Backend API
-	handle_path /api/* {
-		reverse_proxy backend:8000
-	}
+	# Backend API (sem remover prefixo /api)
+	@api path /api/*
+	reverse_proxy @api backend:8000
 
-	# Django Admin
-	handle_path /admin* {
-		reverse_proxy backend:8000
-	}
+	# Django Admin (sem remover prefixo /admin)
+	@admin path /admin*
+	reverse_proxy @admin backend:8000
 
 	# Media files (uploads)
-	handle_path /media/* {
-		reverse_proxy backend:8000
-	}
+	@media path /media/*
+	reverse_proxy @media backend:8000
 
 	# Static files
-	handle_path /static/* {
-		reverse_proxy backend:8000
-	}
+	@static path /static/*
+	reverse_proxy @static backend:8000
 
-	# Frontend (Next.js)
-	handle {
-		reverse_proxy frontend:3000
-	}
+	# Frontend (Next.js) - restante tráfego
+	reverse_proxy frontend:3000
 
 	# Logs
 	log {
@@ -45,14 +39,11 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 	encode gzip
 
 	# API
-	handle_path /api/* {
-		reverse_proxy backend:8000
-	}
+	@api path /api/*
+	reverse_proxy @api backend:8000
 
 	# Frontend
-	handle {
-		reverse_proxy frontend:3000
-	}
+	reverse_proxy frontend:3000
 }
 
 # HTTPS por IP com certificado interno (não será confiável pelo browser)
@@ -61,12 +52,9 @@ imobiliariajamal.com, www.imobiliariajamal.com {
 	encode gzip
 
 	# API
-	handle_path /api/* {
-		reverse_proxy backend:8000
-	}
+	@api path /api/*
+	reverse_proxy @api backend:8000
 
 	# Frontend
-	handle {
-		reverse_proxy frontend:3000
-	}
+	reverse_proxy frontend:3000
 }
