@@ -11,8 +11,15 @@ def admin_auth(request):
     """
     Endpoint de autenticação administrativa
     """
+    import logging
+    logger = logging.getLogger(__name__)
+    
     username_or_email = (request.data.get('username') or '').strip()
     password = (request.data.get('password') or '').strip()
+    
+    logger.info(f"Login attempt - username_or_email: {username_or_email}, has_password: {bool(password)}")
+    logger.info(f"Request data: {request.data}")
+    logger.info(f"Request headers: {dict(request.headers)}")
     
     if not username_or_email or not password:
         return Response(
