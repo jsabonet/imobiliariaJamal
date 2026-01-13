@@ -1,8 +1,9 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework import status
+from django.db.models import Q
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -10,17 +11,27 @@ def admin_auth(request):
     """
     Endpoint de autenticação administrativa
     """
-    username = request.data.get('username')
-    password = request.data.get('password')
+    username_or_email = (request.data.get('username') or '').strip()
+    password = (request.data.get('password') or '').strip()
     
-    if not username or not password:
+    if not username_or_email or not password:
         return Response(
             {'success': False, 'message': 'Username e password são obrigatórios'},
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    # Autenticar usuário
-    user = authenticate(username=username, password=password)
+    # Localizar usuário por username OU email
+    User = get_user_model()
+    user_obj = (
+        User.objects.filter(
+            Q(username__iexact=username_or_email) | Q(email__iexact=username_or_email)
+        )
+        .only('id', 'username', 'is_staff', 'is_superuser', 'email')
+        .first()
+    )
+
+    # Autenticar usuário (usando username real)
+    user = authenticate(username=user_obj.username if user_obj else None, password=password)
     
     if user is not None and user.is_staff:
         return Response({
