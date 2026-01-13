@@ -1,0 +1,41 @@
+# Caddy Configuration - IJPS Imobiliária
+# Proxy reverso com HTTPS automático via Let's Encrypt
+
+imobiliariajamal.com, www.imobiliariajamal.com {
+	# Redireciona www para domínio principal
+	@www host www.imobiliariajamal.com
+	redir @www https://imobiliariajamal.com{uri} permanent
+
+	# Gzip compression
+	encode gzip
+
+	# Backend API
+	handle_path /api/* {
+		reverse_proxy backend:8000
+	}
+
+	# Django Admin
+	handle_path /admin* {
+		reverse_proxy backend:8000
+	}
+
+	# Media files (uploads)
+	handle_path /media/* {
+		reverse_proxy backend:8000
+	}
+
+	# Static files
+	handle_path /static/* {
+		reverse_proxy backend:8000
+	}
+
+	# Frontend (Next.js)
+	handle {
+		reverse_proxy frontend:3000
+	}
+
+	# Logs
+	log {
+		output file /var/log/caddy/access.log
+	}
+}
