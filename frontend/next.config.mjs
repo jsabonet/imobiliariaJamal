@@ -2,26 +2,21 @@
 const nextConfig = {
   output: 'standalone',
   
-  // Rewrite API calls to Django backend
+  // Proxy API requests para o backend Django
   async rewrites() {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     return [
       {
         source: '/api/:path*',
-        destination: process.env.NEXT_PUBLIC_API_URL 
-          ? `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`
-          : 'http://127.0.0.1:8000/api/:path*',
+        destination: `${backendUrl}/api/:path*`,
       },
       {
         source: '/media/:path*',
-        destination: process.env.NEXT_PUBLIC_API_URL 
-          ? `${process.env.NEXT_PUBLIC_API_URL}/media/:path*`
-          : 'http://127.0.0.1:8000/media/:path*',
+        destination: `${backendUrl}/media/:path*`,
       },
       {
         source: '/static/:path*',
-        destination: process.env.NEXT_PUBLIC_API_URL 
-          ? `${process.env.NEXT_PUBLIC_API_URL}/static/:path*`
-          : 'http://127.0.0.1:8000/static/:path*',
+        destination: `${backendUrl}/static/:path*`,
       },
     ];
   },
