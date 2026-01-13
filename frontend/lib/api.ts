@@ -5,7 +5,18 @@
  * Desenvolvido por Zawadi Digital
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+// Garantir que a URL SEMPRE termine com /api
+const getApiUrl = () => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  // Se já termina com /api, retornar como está
+  if (baseUrl.endsWith('/api')) return baseUrl;
+  // Se termina com /, adicionar api
+  if (baseUrl.endsWith('/')) return `${baseUrl}api`;
+  // Caso contrário, adicionar /api
+  return `${baseUrl}/api`;
+};
+
+const API_URL = getApiUrl();
 
 /**
  * Buscar lista de propriedades com filtros opcionais
