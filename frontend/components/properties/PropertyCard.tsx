@@ -154,7 +154,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             )}
             {property.status && (
               <Badge 
-                variant={property.status === 'venda' ? 'primary' : 'secondary'}
+                variant={property.status === 'venda' ? 'info' : 'success'}
                 className="backdrop-blur-sm bg-opacity-95 shadow-md"
               >
                 {property.status === 'venda' ? 'Venda' : 'Arrendamento'}
