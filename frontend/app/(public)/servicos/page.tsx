@@ -201,7 +201,7 @@ export default function ServicosPage() {
             <Link href="/contacto">
               <Button
                 size="lg"
-                className="bg-white text-primary hover:bg-gray-100"
+                className="text-primary hover:bg-gray-100"
               >
                 Começar Agora
               </Button>

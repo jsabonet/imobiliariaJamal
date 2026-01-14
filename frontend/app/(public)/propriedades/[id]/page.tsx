@@ -686,11 +686,15 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   <p className="text-sm text-gray-600 mb-4">
                     Visite esta propriedade pessoalmente
                   </p>
-                  <Link href="/agendar-visita">
+                  <a
+                    href={`https://wa.me/${(property.agent?.phone || '+258840000000').replace(/\s/g, '')}?text=${encodeURIComponent(`Olá! Gostaria de agendar uma visita para a propriedade: ${property.title} (Ref: ${property.referenceCode || property.id})`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Button variant="outline" fullWidth>
                       Agendar Agora
                     </Button>
-                  </Link>
+                  </a>
                 </div>
               </Card>
             </div>
