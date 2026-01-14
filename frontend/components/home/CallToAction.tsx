@@ -19,10 +19,10 @@ const CallToAction = () => {
           {/* Main Content */}
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              Pronto Para Encontrar o Seu Imóvel Ideal?
+              Vamos Encontrar o Imóvel Perfeito para Você
             </h2>
             <p className="text-xl md:text-2xl text-primary-100">
-              Entre em contacto connosco hoje mesmo e deixe-nos ajudar a realizar os seus sonhos
+              Fale agora com nossos especialistas e descubra as melhores oportunidades do mercado
             </p>
           </div>
 
@@ -77,7 +77,7 @@ const CallToAction = () => {
             <Link href="/avaliar">
               <Button 
                 size="lg" 
-                className="min-w-[200px] bg-white text-primary hover:bg-gray-100"
+                className="min-w-[200px] text-primary hover:bg-gray-100"
               >
                 Avaliar Imóvel
               </Button>

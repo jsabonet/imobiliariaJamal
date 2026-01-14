@@ -7,8 +7,8 @@ import Input from '@/components/ui/Input';
 import { useRouter } from 'next/navigation';
 import { FiUpload, FiX, FiUser } from 'react-icons/fi';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function NovoAgentePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,7 @@ export default function NovoAgentePage() {
       if (formData.whatsapp) data.append('whatsapp', formData.whatsapp);
       if (photoFile) data.append('photo', photoFile);
 
-      const response = await fetch(`${API_URL}/api/agents/`, {
+      const response = await fetch(`${API_URL}/agents/`, {
         method: 'POST',
         body: data,
       });
@@ -79,7 +79,7 @@ export default function NovoAgentePage() {
       <div className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl p-6 md:p-8 shadow-lg">
+          <div className="bg-primary text-white rounded-xl p-6 md:p-8 shadow-lg">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">👤 Novo Agente</h1>
             <p className="text-primary-50 text-sm md:text-base">
               Preencha os dados do novo agente imobiliário

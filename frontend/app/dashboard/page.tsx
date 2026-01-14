@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import StatsCard from '@/components/dashboard/StatsCard';
 import { FiHome, FiFileText, FiMail, FiTrendingUp, FiUsers } from 'react-icons/fi';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { fetchProperties, fetchEvaluations, fetchContacts } from '@/lib/api';
 
 export default function DashboardPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
   const [stats, setStats] = useState({
     properties: 0,
     evaluations: 0,
@@ -24,7 +25,7 @@ export default function DashboardPage() {
           fetchProperties({}),
           fetchEvaluations(),
           fetchContacts(),
-          fetch(`${API_URL}/api/agents/`),
+          fetch(`${API_URL}/agents/`),
         ]);
 
         const agentsData = await agentsResponse.json();
@@ -50,7 +51,7 @@ export default function DashboardPage() {
       <div className="p-4 md:p-6 lg:p-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl p-6 md:p-8 shadow-lg">
+          <div className="bg-primary text-white rounded-xl p-6 md:p-8 shadow-lg">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">📊 Dashboard</h1>
             <p className="text-primary-50 text-sm md:text-base">
               Visão geral da plataforma IJPS Imobiliária
@@ -60,9 +61,7 @@ export default function DashboardPage() {
 
         {/* Stats Grid */}
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-          </div>
+          <LoadingSpinner size="lg" text="Carregando estatísticas..." centered />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <StatsCard
@@ -78,7 +77,7 @@ export default function DashboardPage() {
               color="green"
             />
             <StatsCard
-              title="Agentes Cadastrados"
+              title=""
               value={stats.agents}
               icon={FiUsers}
               color="purple"
@@ -151,13 +150,6 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </a>
-              <div className="p-4 bg-green-50 border-2 border-green-200 rounded-lg">
-                <h3 className="font-semibold text-green-800 mb-1">✓ Dashboard Completo</h3>
-                <p className="text-sm text-green-700">
-                  Todas as operações administrativas estão disponíveis neste painel.
-                  Django Admin não é mais necessário!
-                </p>
-              </div>
             </div>
           </div>
         </div>

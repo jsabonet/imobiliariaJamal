@@ -16,8 +16,8 @@ interface Agent {
   photo: string | null;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function EditarAgentePage() {
   const router = useRouter();
   const params = useParams();
@@ -41,7 +41,7 @@ export default function EditarAgentePage() {
 
   async function loadAgent() {
     try {
-      const response = await fetch(`${API_URL}/api/agents/${agentId}/`);
+      const response = await fetch(`${API_URL}/agents/${agentId}/`);
       const data: Agent = await response.json();
       
       setFormData({
@@ -103,7 +103,7 @@ export default function EditarAgentePage() {
         data.append('photo', '');
       }
 
-      const response = await fetch(`${API_URL}/api/agents/${agentId}/`, {
+      const response = await fetch(`${API_URL}/agents/${agentId}/`, {
         method: 'PUT',
         body: data,
       });
@@ -140,7 +140,7 @@ export default function EditarAgentePage() {
       <div className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl p-6 md:p-8 shadow-lg">
+          <div className="bg-primary text-white rounded-xl p-6 md:p-8 shadow-lg">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">✏️ Editar Agente</h1>
             <p className="text-primary-50 text-sm md:text-base">
               Atualize os dados do agente imobiliário

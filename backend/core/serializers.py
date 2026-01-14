@@ -40,11 +40,11 @@ class PropertySerializer(serializers.ModelSerializer):
             'year_built', 'floor_number', 'total_floors',
             'property_condition', 'orientation', 'energy_class', 'heating_type',
             'furnished', 'accepts_pets', 'accepts_financing',
-            'is_featured', 'is_verified',
+            'is_featured', 'is_verified', 'view_count',
             'availability_date', 'internal_notes',
             'amenities', 'agent', 'agent_id', 'images', 'documents', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'view_count']
 
 class EvaluationRequestSerializer(serializers.ModelSerializer):
     class Meta:

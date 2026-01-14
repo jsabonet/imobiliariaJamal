@@ -119,6 +119,17 @@ class PropertyViewSet(viewsets.ModelViewSet):
             return Response({'success': True, 'message': 'Imagem primária definida'})
         except PropertyImage.DoesNotExist:
             return Response({'error': 'Imagem não encontrada'}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=True, methods=['post'], url_path='increment-view')
+    def increment_view(self, request, pk=None):
+        """Incrementa o contador de visualizações de uma propriedade"""
+        property_instance = self.get_object()
+        property_instance.view_count += 1
+        property_instance.save(update_fields=['view_count'])
+        return Response({
+            'success': True, 
+            'view_count': property_instance.view_count
+        })
 
 class PropertyImageViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin):
     """ViewSet para gerenciar imagens de propriedades"""

@@ -1,26 +1,49 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FiPhone, FiMail, FiMapPin, FiClock, FiSend } from 'react-icons/fi';
+import { FiPhone, FiMail, FiMapPin, FiClock, FiSend, FiCheckCircle } from 'react-icons/fi';
 import { FaWhatsapp, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
+import { submitContact } from '@/lib/api';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 export default function ContactoPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    subject: '',
     message: '',
   });
+  
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui será integrado com o backend
-    console.log('Form submitted:', formData);
-    alert('Mensagem enviada com sucesso! Entraremos em contacto em breve.');
+    setLoading(true);
+    setError('');
+    
+    try {
+      await submitContact(formData);
+      setSuccess(true);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+      });
+      
+      // Resetar sucesso após 5 segundos
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err: any) {
+      setError(err.message || 'Erro ao enviar mensagem. Por favor, tente novamente.');
+      console.error('Erro ao enviar contacto:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactInfo = [
@@ -85,6 +108,8 @@ export default function ContactoPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <LoadingOverlay isOpen={loading} message="Enviando mensagem" type="form" />
+      
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-secondary to-secondary-700 text-white py-16 md:py-24">
         <div className="container mx-auto px-4">
@@ -140,6 +165,25 @@ export default function ContactoPage() {
                   <h2 className="text-3xl font-bold text-secondary mb-6">
                     Envie-nos uma Mensagem
                   </h2>
+                  
+                  {/* Success Message */}
+                  {success && (
+                    <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3 animate-fade-in">
+                      <FiCheckCircle className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
+                      <div>
+                        <p className="font-semibold text-green-800">Mensagem Enviada com Sucesso!</p>
+                        <p className="text-sm text-green-700 mt-1">Entraremos em contacto em breve.</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Error Message */}
+                  {error && (
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-600">{error}</p>
+                    </div>
+                  )}
+                  
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Input
@@ -153,28 +197,19 @@ export default function ContactoPage() {
                         label="Email"
                         type="email"
                         placeholder="seu@email.com"
-                        required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Input
-                        label="Telefone / WhatsApp"
-                        type="tel"
-                        placeholder="+258 XX XXX XXXX"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      />
-                      <Input
-                        label="Assunto"
-                        placeholder="Sobre o que deseja falar?"
-                        required
-                        value={formData.subject}
-                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      />
-                    </div>
+                    <Input
+                      label="Telefone / WhatsApp"
+                      type="tel"
+                      placeholder="+258 XX XXX XXXX"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
 
                     <div>
                       <label className="block text-sm font-medium text-secondary-700 mb-2">
@@ -190,9 +225,9 @@ export default function ContactoPage() {
                       ></textarea>
                     </div>
 
-                    <Button type="submit" size="lg" fullWidth>
+                    <Button type="submit" size="lg" fullWidth disabled={loading}>
                       <FiSend className="mr-2" />
-                      Enviar Mensagem
+                      {loading ? 'Enviando...' : 'Enviar Mensagem'}
                     </Button>
                   </form>
                 </div>
@@ -333,7 +368,7 @@ export default function ContactoPage() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
+            <Button size="lg" className=" text-primary hover:bg-gray-100">
               <FaWhatsapp size={20} className="mr-2" />
               Contactar Agora
             </Button>

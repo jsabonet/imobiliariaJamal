@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { FiEdit2, FiTrash2, FiPlus, FiPhone, FiMail, FiMessageCircle, FiUser } from 'react-icons/fi';
 import Button from '@/components/ui/Button';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 
 interface Agent {
@@ -16,7 +17,7 @@ interface Agent {
 }
 
 export default function AgentesPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
   const router = useRouter();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,10 @@ export default function AgentesPage() {
 
   async function loadAgents() {
     try {
-      const response = await fetch(`${API_URL}/api/agents/`);
+      // Delay artificial de 1.5 segundos para visualizar o loading
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const response = await fetch(`${API_URL}/agents/`);
       const data = await response.json();
       setAgents(data.results || data || []);
     } catch (error) {
@@ -41,7 +45,7 @@ export default function AgentesPage() {
 
   async function handleDelete(id: number) {
     try {
-      const response = await fetch(`${API_URL}/api/agents/${id}/`, {
+      const response = await fetch(`${API_URL}/agents/${id}/`, {
         method: 'DELETE',
       });
 
@@ -62,10 +66,7 @@ export default function AgentesPage() {
     return (
       <DashboardLayout>
         <div className="p-4 md:p-6 lg:p-8 flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-gray-600">Carregando agentes...</p>
-          </div>
+          <LoadingSpinner size="lg" text="Carregando agentes..." centered />
         </div>
       </DashboardLayout>
     );
@@ -76,7 +77,7 @@ export default function AgentesPage() {
       <div className="p-4 md:p-6 lg:p-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl p-6 md:p-8 shadow-lg">
+          <div className="bg-primary text-white rounded-xl p-6 md:p-8 shadow-lg">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">👥 Agentes</h1>
@@ -86,7 +87,7 @@ export default function AgentesPage() {
               </div>
               <Button
                 onClick={() => router.push('/dashboard/agentes/novo')}
-                className="flex items-center justify-center gap-2 bg-white text-primary hover:bg-primary-50 min-h-[48px] md:min-h-[44px] shadow-lg"
+                className="flex items-center justify-center gap-2 text-primary min-h-[48px] md:min-h-[44px] shadow-lg"
               >
                 <FiPlus size={20} />
                 <span className="font-semibold">Novo Agente</span>

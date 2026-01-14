@@ -18,7 +18,7 @@ export default function EditarPropriedadePage() {
   const router = useRouter();
   const params = useParams();
   const propertyId = params.id as string;
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState('');
@@ -120,7 +120,7 @@ export default function EditarPropriedadePage() {
   useEffect(() => {
     async function loadAgents() {
       try {
-        const response = await fetch(`${API_URL}/api/agents/`);
+        const response = await fetch(`${API_URL}/agents/`);
         const data = await response.json();
         setAgents(data.results || data || []);
       } catch (err) {
@@ -224,7 +224,7 @@ export default function EditarPropriedadePage() {
     const loadPropertyData = async () => {
       try {
         setLoadingData(true);
-        const response = await fetch(`${API_URL}/api/properties/${propertyId}/`);
+        const response = await fetch(`${API_URL}/properties/${propertyId}/`);
         
         if (!response.ok) {
           throw new Error('Erro ao carregar propriedade');
@@ -273,7 +273,7 @@ export default function EditarPropriedadePage() {
           furnished: data.furnished || '',
           accepts_pets: data.accepts_pets || '',
           accepts_financing: data.accepts_financing || '',
-          agent: data.agent || '',
+          agent: data.agent?.id || '',
           internal_notes: data.internal_notes || '',
           is_featured: data.is_featured || false,
           is_verified: data.is_verified || false,
@@ -320,7 +320,9 @@ export default function EditarPropriedadePage() {
         if (key === 'amenities') return;
         const value = formData[key as keyof typeof formData];
         if (value !== null && value !== undefined && value !== '') {
-          formDataToSend.append(key, String(value));
+          // Converter agent para agent_id
+          const fieldName = key === 'agent' ? 'agent_id' : key;
+          formDataToSend.append(fieldName, String(value));
         }
       });
       
@@ -345,7 +347,7 @@ export default function EditarPropriedadePage() {
       });
       
       // PATCH para atualizar propriedade existente (parcial)
-      const response = await fetch(`${API_URL}/api/properties/${propertyId}/`, {
+      const response = await fetch(`${API_URL}/properties/${propertyId}/`, {
         method: 'PATCH',
         body: formDataToSend,
         // NÃO definir Content-Type - o browser faz isso automaticamente com boundary correto
@@ -389,7 +391,7 @@ export default function EditarPropriedadePage() {
       <div className="p-4 md:p-6 lg:p-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl p-6 md:p-8 shadow-lg">
+          <div className="bg-primary text-white rounded-xl p-6 md:p-8 shadow-lg">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">✏️ Editar Propriedade</h1>
             <p className="text-primary-50 text-sm md:text-base">Atualize os campos necessários e salve as alterações</p>
           </div>

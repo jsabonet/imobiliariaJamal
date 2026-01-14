@@ -3,16 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiMaximize2, FiMapPin, FiPhone, FiMail, FiShare2, FiHeart } from 'react-icons/fi';
+import { FiMaximize2, FiMapPin, FiPhone, FiMail, FiShare2, FiHeart, FiCheckCircle } from 'react-icons/fi';
 import { IoBed, IoWater } from 'react-icons/io5';
 import { FaWhatsapp, FaCheckCircle } from 'react-icons/fa';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
-import { Skeleton, SkeletonText } from '@/components/ui/Skeleton';
 import MapPlaceholder from '@/components/ui/MapPlaceholder';
-import { fetchPropertyById } from '@/lib/api';
+import { fetchPropertyById, submitContact } from '@/lib/api';
 import { useFavorites } from '@/lib/useFavorites';
 
 export default function PropertyDetailPage({ params }: { params: { id: string } }) {
@@ -21,6 +20,17 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [property, setProperty] = useState<any | null>(null);
+  
+  // Contact form state
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const [contactLoading, setContactLoading] = useState(false);
+  const [contactSuccess, setContactSuccess] = useState(false);
+  const [contactError, setContactError] = useState('');
 
   const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/?api\/?$/, '');
 
@@ -93,13 +103,15 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             acceptsFinancing: !!data.accepts_financing,
           },
           agent,
-          latitude: data.latitude,
-          longitude: data.longitude,
+          latitude: data.latitude ? Number(data.latitude) : null,
+          longitude: data.longitude ? Number(data.longitude) : null,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
         };
 
-        if (isMounted) setProperty(mapped);
+        if (isMounted) {
+          setProperty(mapped);
+        }
       } catch (e: any) {
         if (isMounted) setError(e.message || 'Falha ao carregar propriedade');
       } finally {
@@ -108,7 +120,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     }
     load();
     return () => { isMounted = false; };
-  }, [params.id]);
+  }, [params.id, API_BASE]);
 
   function formatPrice(price: number): string {
     const formatted = new Intl.NumberFormat('pt-PT', {
@@ -135,109 +147,38 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
   const favorited = property ? isFavorite(property.id) : false;
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+          <p className="text-gray-600">Carregando propriedade...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card>
+          <div className="p-8 text-center">
+            <p className="text-red-600 text-lg mb-4">{error}</p>
+            <Link href="/propriedades">
+              <Button>Voltar às Propriedades</Button>
+            </Link>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!property) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {loading && (
-        <div className="container mx-auto px-4 py-8">
-          {/* Skeleton for gallery */}
-          <div className="bg-black">
-            <div className="container mx-auto px-4 py-4">
-              <div className="h-[300px] md:h-[500px] rounded-xl overflow-hidden mb-4">
-                <Skeleton className="w-full h-full" />
-              </div>
-              <div className="grid grid-cols-4 gap-4">
-                <Skeleton className="h-20 md:h-24 rounded-lg" />
-                <Skeleton className="h-20 md:h-24 rounded-lg" />
-                <Skeleton className="h-20 md:h-24 rounded-lg" />
-                <Skeleton className="h-20 md:h-24 rounded-lg" />
-              </div>
-            </div>
-          </div>
-
-          {/* Skeleton for main content */}
-          <div className="container mx-auto px-4 py-8">
-            <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-              <div className="lg:col-span-2 space-y-6">
-                <Card>
-                  <div className="p-6 space-y-4">
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-3">
-                        <div className="flex gap-2">
-                          <Skeleton className="h-6 w-20" />
-                          <Skeleton className="h-6 w-24" />
-                        </div>
-                        <SkeletonText className="h-8 w-2/3" />
-                        <SkeletonText className="h-4 w-1/3" />
-                      </div>
-                      <div className="flex gap-2">
-                        <Skeleton className="h-10 w-10 rounded-lg" />
-                        <Skeleton className="h-10 w-10 rounded-lg" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-10 w-40" />
-                    <div className="grid grid-cols-3 gap-4 py-6">
-                      <Skeleton className="h-20" />
-                      <Skeleton className="h-20" />
-                      <Skeleton className="h-20" />
-                    </div>
-                  </div>
-                </Card>
-
-                <Card>
-                  <div className="p-6 space-y-3">
-                    <SkeletonText width="w-40" />
-                    <Skeleton className="h-24" />
-                  </div>
-                </Card>
-
-                <Card>
-                  <div className="p-6 space-y-3">
-                    <SkeletonText width="w-40" />
-                    <div className="grid grid-cols-2 gap-3">
-                      <Skeleton className="h-5" />
-                      <Skeleton className="h-5" />
-                      <Skeleton className="h-5" />
-                      <Skeleton className="h-5" />
-                      <Skeleton className="h-5" />
-                      <Skeleton className="h-5" />
-                    </div>
-                  </div>
-                </Card>
-
-                <Card>
-                  <div className="p-6 space-y-3">
-                    <SkeletonText width="w-40" />
-                    <Skeleton className="h-64" />
-                  </div>
-                </Card>
-              </div>
-              <div className="lg:col-span-1 mt-6 lg:mt-0">
-                <Card>
-                  <div className="p-6 space-y-4">
-                    <SkeletonText width="w-48" />
-                    <div className="flex items-center gap-4">
-                      <Skeleton className="h-16 w-16 rounded-full" />
-                      <div className="flex-1 space-y-2">
-                        <SkeletonText width="w-32" />
-                        <SkeletonText width="w-20" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-10" />
-                    <Skeleton className="h-10" />
-                  </div>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      {!loading && error && (
-        <div className="container mx-auto px-4 py-16">
-          <p className="text-center text-red-600">{error}</p>
-        </div>
-      )}
-      {!loading && property && (
-      <>
       {/* Image Gallery */}
       <div className="bg-black">
         <div className="container mx-auto px-4 py-4">
@@ -574,16 +515,17 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
             {/* Map */}
             <Card>
-                    <div className="p-6">
-                      <h2 className="text-2xl font-bold text-secondary mb-4">Localização</h2>
-                      <MapPlaceholder latitude={property.latitude} longitude={property.longitude} height={256} />
-                    </div>
-                  </Card>
+              <div className="p-6">
+                <h2 className="text-2xl font-bold text-secondary mb-4">Localização</h2>
+                <p className="text-gray-600 mb-4">{property.location}</p>
+                <MapPlaceholder latitude={property.latitude} longitude={property.longitude} height={400} />
+              </div>
+            </Card>
           </div>
 
           {/* Right Column - Contact Form */}
           <div className="lg:col-span-1 mt-6 lg:mt-0">
-            <div className="sticky top-24 space-y-6">
+            <div className="lg:sticky lg:top-24 space-y-6">
               {/* Agent Card */}
               <Card>
                 <div className="p-6">
@@ -607,16 +549,111 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   </div>
 
                   {/* Contact Form */}
-                  <form className="space-y-4">
-                    <Input placeholder="Seu Nome" />
-                    <Input type="email" placeholder="Seu Email" />
-                    <Input type="tel" placeholder="Seu Telefone" />
-                    <textarea
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-100"
-                      rows={4}
-                      placeholder="Sua Mensagem"
-                    ></textarea>
-                    <Button fullWidth>Enviar Mensagem</Button>
+                  <form 
+                    className="space-y-4"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      setContactLoading(true);
+                      setContactError('');
+                      
+                      try {
+                        await submitContact({
+                          ...contactForm,
+                          property: property.id,
+                        });
+                        setContactSuccess(true);
+                        setContactForm({
+                          name: '',
+                          email: '',
+                          phone: '',
+                          message: '',
+                        });
+                        
+                        // Reset success message after 5 seconds
+                        setTimeout(() => setContactSuccess(false), 5000);
+                      } catch (err: any) {
+                        setContactError('Erro ao enviar mensagem. Por favor, tente novamente.');
+                        console.error('Erro ao enviar contacto:', err);
+                      } finally {
+                        setContactLoading(false);
+                      }
+                    }}
+                  >
+                    {/* Success Message */}
+                    {contactSuccess && (
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-start gap-2 animate-fade-in">
+                        <FiCheckCircle className="text-green-600 flex-shrink-0 mt-0.5" size={18} />
+                        <div>
+                          <p className="text-sm font-semibold text-green-800">Mensagem Enviada!</p>
+                          <p className="text-xs text-green-700 mt-0.5">Entraremos em contacto em breve.</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Error Message */}
+                    {contactError && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-sm text-red-600">{contactError}</p>
+                      </div>
+                    )}
+                    
+                    <div>
+                      <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 mb-2">
+                        Nome <span className="text-red-500">*</span>
+                      </label>
+                      <Input 
+                        id="contact-name"
+                        placeholder="Digite seu nome" 
+                        required
+                        value={contactForm.name}
+                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                      </label>
+                      <Input 
+                        id="contact-email"
+                        type="email" 
+                        placeholder="seu@email.com"
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="contact-phone" className="block text-sm font-medium text-gray-700 mb-2">
+                        Telefone <span className="text-red-500">*</span>
+                      </label>
+                      <Input 
+                        id="contact-phone"
+                        type="tel" 
+                        placeholder="+258 XX XXX XXXX"
+                        required
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 mb-2">
+                        Mensagem <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        id="contact-message"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary-100"
+                        rows={4}
+                        placeholder="Digite sua mensagem ou dúvida sobre o imóvel"
+                        required
+                        value={contactForm.message}
+                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                      ></textarea>
+                    </div>
+                    <Button fullWidth type="submit" disabled={contactLoading}>
+                      {contactLoading ? 'Enviando...' : 'Enviar Mensagem'}
+                    </Button>
                   </form>
 
                   <div className="mt-6 pt-6 border-t space-y-3">
@@ -660,8 +697,6 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           </div>
         </div>
       </div>
-      </>
-      )}
     </div>
   );
 }

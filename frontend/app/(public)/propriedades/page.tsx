@@ -1,20 +1,32 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import PropertyCard from '@/components/properties/PropertyCard';
 import { FiSearch, FiSliders } from 'react-icons/fi';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
-import { SkeletonCard } from '@/components/ui/Skeleton';
+import SkeletonCard from '@/components/ui/SkeletonCard';
+import Pagination from '@/components/ui/Pagination';
 import { fetchProperties, PaginatedResponse, Property as ApiProperty } from '@/lib/api';
 
 export default function PropriedadesPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [results, setResults] = useState<PaginatedResponse<ApiProperty> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [filtersInitialized, setFiltersInitialized] = useState(false);
+  
+  // Search input state for debounce
+  const [searchInput, setSearchInput] = useState('');
+  
+  // Cache for results
+  const cacheRef = useRef<Map<string, PaginatedResponse<ApiProperty>>>(new Map());
   
   // Filter states
   const [filters, setFilters] = useState({
@@ -25,15 +37,52 @@ export default function PropriedadesPage() {
     bedrooms: '',
     bathrooms: '',
     ordering: 'recent',
+    status: 'all',
   });
+
+  // Initialize filters from URL params on mount
+  useEffect(() => {
+    if (!filtersInitialized) {
+      const urlSearch = searchParams.get('search') || '';
+      const urlType = searchParams.get('type') || 'all';
+      const urlLocation = searchParams.get('location') || 'all';
+      const urlPriceRange = searchParams.get('priceRange') || 'all';
+      const urlStatus = searchParams.get('status') || 'all';
+      
+      setSearchInput(urlSearch);
+      setFilters({
+        search: urlSearch,
+        type: urlType,
+        location: urlLocation,
+        priceRange: urlPriceRange,
+        bedrooms: '',
+        bathrooms: '',
+        ordering: 'recent',
+        status: urlStatus,
+      });
+      setFiltersInitialized(true);
+    }
+  }, [searchParams, filtersInitialized]);
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters(prev => ({ ...prev, search: searchInput }));
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const API_BASE = useMemo(() => (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/?api\/?$/, ''), []);
 
   useEffect(() => {
+    if (!filtersInitialized) return;
+    
     let mounted = true;
     async function load() {
       try {
         setLoading(true);
+        setError('');
         
         // Build query params from filters
         const params: Record<string, string> = {};
@@ -42,6 +91,14 @@ export default function PropriedadesPage() {
         if (filters.location !== 'all') params.location = filters.location;
         if (filters.bedrooms) params.bedrooms = filters.bedrooms;
         if (filters.bathrooms) params.bathrooms = filters.bathrooms;
+        if (filters.status !== 'all') params.status = filters.status;
+        
+        // Handle price range
+        if (filters.priceRange !== 'all') {
+          const [min, max] = filters.priceRange.split('-');
+          if (min) params.price_min = min;
+          if (max && max !== '+') params.price_max = max;
+        }
         
         // Handle ordering
         if (filters.ordering === 'price-low') params.ordering = 'price';
@@ -49,8 +106,34 @@ export default function PropriedadesPage() {
         else if (filters.ordering === 'area') params.ordering = '-area';
         else params.ordering = '-created_at';
         
+        // Create cache key from params
+        const cacheKey = JSON.stringify(params);
+        
+        // Check cache first
+        const cachedData = cacheRef.current.get(cacheKey);
+        if (cachedData) {
+          if (mounted) {
+            setResults(cachedData);
+            setLoading(false);
+          }
+          return;
+        }
+        
         const data = await fetchProperties(params);
-        if (mounted) setResults(data);
+        
+        if (mounted) {
+          setResults(data);
+          // Store in cache
+          cacheRef.current.set(cacheKey, data);
+          
+          // Limit cache size to 20 entries
+          if (cacheRef.current.size > 20) {
+            const firstKey = cacheRef.current.keys().next().value;
+            if (firstKey) {
+              cacheRef.current.delete(firstKey);
+            }
+          }
+        }
       } catch (e: any) {
         if (mounted) setError(e.message || 'Falha ao carregar propriedades');
       } finally {
@@ -59,7 +142,7 @@ export default function PropriedadesPage() {
     }
     load();
     return () => { mounted = false; };
-  }, [filters]);
+  }, [filters, filtersInitialized]);
 
   const propertyTypes = [
     { value: 'all', label: 'Todos os Tipos' },
@@ -70,11 +153,20 @@ export default function PropriedadesPage() {
   ];
 
   const locations = [
-    { value: 'all', label: 'Todas as Localizações' },
-    { value: 'maputo', label: 'Maputo' },
+    { value: 'all', label: 'Todas as Províncias' },
+    { value: 'maputo cidade', label: 'Maputo Cidade' },
+    { value: 'maputo província', label: 'Maputo Província' },
     { value: 'matola', label: 'Matola' },
+    { value: 'gaza', label: 'Gaza' },
+    { value: 'inhambane', label: 'Inhambane' },
+    { value: 'sofala', label: 'Sofala' },
     { value: 'beira', label: 'Beira' },
+    { value: 'manica', label: 'Manica' },
+    { value: 'tete', label: 'Tete' },
+    { value: 'zambézia', label: 'Zambézia' },
     { value: 'nampula', label: 'Nampula' },
+    { value: 'cabo delgado', label: 'Cabo Delgado' },
+    { value: 'niassa', label: 'Niassa' },
   ];
 
   const priceRanges = [
@@ -108,6 +200,7 @@ export default function PropriedadesPage() {
   };
 
   const clearFilters = () => {
+    setSearchInput('');
     setFilters({
       search: '',
       type: 'all',
@@ -116,7 +209,10 @@ export default function PropriedadesPage() {
       bedrooms: '',
       bathrooms: '',
       ordering: 'recent',
+      status: 'all',
     });
+    // Clear cache when filters are cleared
+    cacheRef.current.clear();
   };
 
   const loadPage = async (url: string) => {
@@ -197,8 +293,24 @@ export default function PropriedadesPage() {
                   <Input
                     placeholder="Pesquisar..."
                     icon={<FiSearch size={18} />}
-                    value={filters.search}
-                    onChange={(e) => handleFilterChange('search', e.target.value)}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                </div>
+
+                {/* Status - Venda/Arrendamento */}
+                <div>
+                  <label className="block text-sm font-medium text-secondary-700 mb-2">
+                    Tipo de Negócio
+                  </label>
+                  <Select 
+                    options={[
+                      { value: 'all', label: 'Todos' },
+                      { value: 'venda', label: 'Comprar' },
+                      { value: 'arrendamento', label: 'Arrendar' },
+                    ]} 
+                    value={filters.status}
+                    onChange={(e) => handleFilterChange('status', e.target.value)}
                   />
                 </div>
 
@@ -325,14 +437,7 @@ export default function PropriedadesPage() {
             {/* Properties Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
               {loading && (
-                <>
-                  <SkeletonCard />
-                  <SkeletonCard />
-                  <SkeletonCard />
-                  <SkeletonCard />
-                  <SkeletonCard />
-                  <SkeletonCard />
-                </>
+                <SkeletonCard type="property" count={6} />
               )}
               {!loading && !error && properties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
@@ -343,26 +448,32 @@ export default function PropriedadesPage() {
             </div>
 
             {/* Pagination */}
-            {results && (results.previous || results.next) && (
-              <div className="flex justify-center gap-2 items-center">
-                <Button 
-                  variant="outline" 
-                  onClick={() => results.previous && loadPage(results.previous)}
-                  disabled={!results.previous || loading}
-                >
-                  Anterior
-                </Button>
-                <span className="px-4 py-2 text-sm text-gray-600">
-                  {properties.length} de {results.count} resultados
-                </span>
-                <Button 
-                  variant="outline"
-                  onClick={() => results.next && loadPage(results.next)}
-                  disabled={!results.next || loading}
-                >
-                  Próximo
-                </Button>
-              </div>
+            {results && results.count > itemsPerPage && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(results.count / itemsPerPage)}
+                totalItems={results.count}
+                itemsPerPage={itemsPerPage}
+                onPageChange={(page) => {
+                  setCurrentPage(page);
+                  // Scroll to top
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  // Update URL
+                  const params = new URLSearchParams(window.location.search);
+                  params.set('page', page.toString());
+                  router.push(`?${params.toString()}`, { scroll: false });
+                }}
+                onItemsPerPageChange={(items) => {
+                  setItemsPerPage(items);
+                  setCurrentPage(1);
+                  // Update URL
+                  const params = new URLSearchParams(window.location.search);
+                  params.set('page', '1');
+                  params.set('per_page', items.toString());
+                  router.push(`?${params.toString()}`, { scroll: false });
+                }}
+                showItemsPerPage={true}
+              />
             )}
           </main>
         </div>

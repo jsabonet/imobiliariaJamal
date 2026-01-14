@@ -15,9 +15,10 @@ class PropertyDocumentInline(admin.TabularInline):
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ('title', 'location', 'price', 'type', 'status', 'is_featured', 'is_verified')
+    list_display = ('title', 'location', 'price', 'type', 'status', 'view_count', 'is_featured', 'is_verified')
     list_filter = ('type', 'status', 'location', 'is_featured', 'is_verified')
     search_fields = ('title', 'location', 'description')
+    readonly_fields = ('view_count', 'created_at', 'updated_at')
     inlines = [PropertyImageInline, PropertyDocumentInline]
 
 @admin.register(Agent)

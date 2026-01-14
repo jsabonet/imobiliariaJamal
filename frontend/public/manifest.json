@@ -1,24 +1,66 @@
 {
-  "name": "IJPS Imobiliária",
+  "name": "IJPS - Imobiliária Jamal & Prestação de Serviços",
   "short_name": "IJPS",
-  "description": "Encontre o imóvel dos seus sonhos em Moçambique",
+  "description": "Encontre o imóvel dos seus sonhos em Moçambique. Compra, venda, arrendamento e avaliação de propriedades.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#C8552B",
   "orientation": "portrait-primary",
+  "categories": ["business", "shopping"],
+  "lang": "pt-MZ",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/logo.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Ver Propriedades",
+      "short_name": "Propriedades",
+      "description": "Navegar por todas as propriedades disponíveis",
+      "url": "/propriedades",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Avaliar Imóvel",
+      "short_name": "Avaliar",
+      "description": "Solicitar avaliação do seu imóvel",
+      "url": "/avaliar",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Contactar",
+      "short_name": "Contacto",
+      "description": "Entre em contacto connosco",
+      "url": "/contacto",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

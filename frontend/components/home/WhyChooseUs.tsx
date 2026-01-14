@@ -4,34 +4,34 @@ import { FiCheckCircle, FiShield, FiClock, FiUsers, FiAward, FiTrendingUp } from
 const WhyChooseUs = () => {
   const reasons = [
     {
-      icon: <FiShield size={32} />,
-      title: 'Transparência Total',
-      description: 'Preços claros, documentação verificada e processos transparentes em todas as transações.',
+      icon: <FiAward size={32} />,
+      title: '15 Anos de Experiência',
+      description: 'Conhecimento profundo do mercado imobiliário moçambicano e expertise consolidada.',
     },
     {
       icon: <FiCheckCircle size={32} />,
-      title: 'Propriedades Verificadas',
-      description: 'Todas as propriedades passam por rigorosa verificação de documentação e estado.',
+      title: 'Portfólio Premium',
+      description: '50-100 propriedades verificadas na faixa de 1.5M a 40M MZN.',
     },
     {
       icon: <FiUsers size={32} />,
-      title: 'Equipa Profissional',
-      description: 'Agentes experientes e qualificados prontos para ajudar em cada etapa do processo.',
+      title: 'Atendimento Internacional',
+      description: 'Especialistas em atender clientes de Holanda, Portugal e Itália.',
     },
     {
       icon: <FiClock size={32} />,
-      title: 'Atendimento Rápido',
-      description: 'Resposta em menos de 2 horas via WhatsApp, telefone ou email.',
+      title: '10-20 Arrendamentos/Mês',
+      description: 'Performance comprovada com transações mensais consistentes.',
     },
     {
-      icon: <FiAward size={32} />,
-      title: '10+ Anos de Experiência',
-      description: 'Conhecimento profundo do mercado imobiliário moçambicano.',
+      icon: <FiShield size={32} />,
+      title: 'Legalização Especializada',
+      description: 'Serviço completo de regularização e legalização de propriedades.',
     },
     {
       icon: <FiTrendingUp size={32} />,
-      title: 'Tecnologia Avançada',
-      description: 'Plataforma digital moderna para facilitar a busca e gestão de propriedades.',
+      title: 'Foco em Classe Alta',
+      description: 'Atendimento personalizado para clientes premium entre 30-40 anos.',
     },
   ];
 
@@ -76,10 +76,10 @@ const WhyChooseUs = () => {
         {/* Stats Section */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { number: '500+', label: 'Propriedades Listadas' },
-            { number: '300+', label: 'Clientes Felizes' },
-            { number: '98%', label: 'Taxa de Satisfação' },
-            { number: '24/7', label: 'Suporte Disponível' },
+            { number: '15', label: 'Anos de Experiência' },
+            { number: '50-100', label: 'Propriedades em Carteira' },
+            { number: '10-20', label: 'Arrendamentos/Mês' },
+            { number: '3', label: 'Serviços Principais' },
           ].map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">

@@ -119,6 +119,9 @@ class Property(models.Model):
     is_featured = models.BooleanField(default=False, verbose_name="Destaque")
     is_verified = models.BooleanField(default=False, verbose_name="Verificado")
     
+    # Estatísticas
+    view_count = models.PositiveIntegerField(default=0, verbose_name="Número de Visualizações")
+    
     # Disponibilidade
     availability_date = models.DateField(blank=True, null=True, verbose_name="Data de Disponibilidade")
     

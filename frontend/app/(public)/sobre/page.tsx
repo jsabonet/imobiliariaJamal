@@ -62,12 +62,12 @@ export default function SobrePage() {
   ];
 
   const milestones = [
-    { year: '2014', event: 'Fundação da IJPS em Maputo' },
-    { year: '2016', event: 'Expansão para Matola e Beira' },
-    { year: '2018', event: '100+ Propriedades Vendidas' },
-    { year: '2020', event: 'Lançamento de Serviços de Consultoria' },
-    { year: '2023', event: '500+ Clientes Satisfeitos' },
-    { year: '2025', event: 'Plataforma Digital Lançada' },
+    { year: '2010', event: 'Fundação da IJPS em Maputo' },
+    { year: '2012', event: 'Primeiros Serviços de Legalização' },
+    { year: '2015', event: 'Expansão do Portfólio - 50+ Propriedades' },
+    { year: '2018', event: 'Especialização em Clientes Internacionais' },
+    { year: '2020', event: '10-20 Arrendamentos Mensais' },
+    { year: '2025', event: 'Lançamento da Plataforma Digital' },
   ];
 
   return (
@@ -80,7 +80,7 @@ export default function SobrePage() {
               Sobre a IJPS
             </h1>
             <p className="text-xl md:text-2xl text-gray-200">
-              Mais de 10 anos conectando pessoas aos imóveis dos seus sonhos em Moçambique
+              15 anos conectando pessoas aos imóveis dos seus sonhos em Moçambique
             </p>
           </div>
         </div>
@@ -96,18 +96,24 @@ export default function SobrePage() {
               </h2>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  A <strong>IJPS - Imobiliária Jamal & Prestação de Serviços</strong> foi fundada em 2014 
-                  com uma missão clara: transformar o mercado imobiliário moçambicano através de 
+                  A <strong>IJPS - Imobiliária Jamal & Prestação de Serviços</strong> atua há 15 anos 
+                  no mercado imobiliário moçambicano com uma missão clara: transformar o mercado através de 
                   transparência, profissionalismo e tecnologia.
                 </p>
                 <p>
                   O que começou como um pequeno escritório em Maputo, hoje é uma das imobiliárias 
-                  mais confiáveis de Moçambique, com centenas de clientes satisfeitos e milhares de 
-                  transações bem-sucedidas.
+                  mais confiáveis de Moçambique, especializada no atendimento a clientes locais e 
+                  internacionais, com forte presença de clientes de Holanda, Portugal e Itália.
+                </p>
+                <p>
+                  Com um portfólio diversificado de 50 a 100 propriedades, oferecemos imóveis 
+                  na faixa de 1.5M a 40M MZN, realizando mensalmente entre 10 a 20 arrendamentos 
+                  e diversas transações de venda.
                 </p>
                 <p>
                   Nossa equipa de especialistas trabalha incansavelmente para garantir que cada cliente 
-                  encontre a propriedade perfeita, seja para viver, investir ou arrendar.
+                  encontre a propriedade perfeita, seja para viver, investir ou arrendar. Nosso foco 
+                  principal é atender clientes de classe alta, com idade predominante entre 30-40 anos.
                 </p>
                 <p>
                   Em 2025, demos um passo importante ao lançar nossa plataforma digital em parceria com 
@@ -133,10 +139,10 @@ export default function SobrePage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { number: '10+', label: 'Anos de Experiência' },
-              { number: '500+', label: 'Propriedades Vendidas' },
-              { number: '300+', label: 'Clientes Satisfeitos' },
-              { number: '98%', label: 'Taxa de Satisfação' },
+              { number: '15', label: 'Anos de Experiência' },
+              { number: '50-100', label: 'Propriedades em Carteira' },
+              { number: '10-20', label: 'Arrendamentos/Mês' },
+              { number: '3', label: 'Serviços Especializados' },
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-4xl md:text-5xl font-bold mb-2">
@@ -277,7 +283,7 @@ export default function SobrePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/propriedades">
-              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 min-w-[200px]">
+              <Button size="lg" className=" text-primary hover:bg-gray-100 min-w-[200px]">
                 Ver Propriedades
               </Button>
             </Link>

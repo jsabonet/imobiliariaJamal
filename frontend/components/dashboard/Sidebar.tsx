@@ -40,9 +40,9 @@ const Sidebar = ({ onClose }: SidebarProps) => {
       {/* Logo */}
       <div className="flex-shrink-0 p-6 lg:p-8 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg">
+          {/* <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg">
             <span className="text-white font-bold text-xl">IJ</span>
-          </div>
+          </div> */}
           <div>
             <h1 className="text-xl lg:text-2xl font-bold text-primary">IJPS Admin</h1>
             <p className="text-xs text-gray-300 mt-0.5">Painel Administrativo</p>

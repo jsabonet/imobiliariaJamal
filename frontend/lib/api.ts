@@ -46,6 +46,24 @@ export async function fetchPropertyById(id: string) {
 }
 
 /**
+ * Incrementar contador de visualizações de uma propriedade
+ * @param id - ID da propriedade
+ * @returns Contador atualizado
+ */
+export async function incrementPropertyView(id: string) {
+  try {
+    const res = await fetch(`${API_URL}/properties/${id}/increment_view/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Buscar lista de agentes imobiliários
  * @returns Lista de agentes
  */
@@ -104,6 +122,28 @@ export async function fetchEvaluations() {
 }
 
 /**
+ * Buscar avaliação específica (Admin)
+ * @param id - ID da avaliação
+ * @returns Dados da avaliação
+ */
+export async function fetchEvaluation(id: number) {
+  const res = await fetch(`${API_URL}/evaluations/${id}/`);
+  if (!res.ok) throw new Error('Falha ao buscar avaliação');
+  return res.json();
+}
+
+/**
+ * Deletar avaliação (Admin)
+ * @param id - ID da avaliação
+ */
+export async function deleteEvaluation(id: number) {
+  const res = await fetch(`${API_URL}/evaluations/${id}/`, {
+    method: 'DELETE'
+  });
+  if (!res.ok) throw new Error('Falha ao deletar avaliação');
+}
+
+/**
  * Buscar todas as mensagens de contacto (Admin)
  * @returns Lista de contactos
  */
@@ -113,6 +153,28 @@ export async function fetchContacts() {
   });
   if (!res.ok) throw new Error('Falha ao buscar contactos');
   return res.json();
+}
+
+/**
+ * Buscar contacto específico (Admin)
+ * @param id - ID do contacto
+ * @returns Dados do contacto
+ */
+export async function fetchContact(id: number) {
+  const res = await fetch(`${API_URL}/contacts/${id}/`);
+  if (!res.ok) throw new Error('Falha ao buscar contacto');
+  return res.json();
+}
+
+/**
+ * Deletar contacto (Admin)
+ * @param id - ID do contacto
+ */
+export async function deleteContact(id: number) {
+  const res = await fetch(`${API_URL}/contacts/${id}/`, {
+    method: 'DELETE'
+  });
+  if (!res.ok) throw new Error('Falha ao deletar contacto');
 }
 
 /**

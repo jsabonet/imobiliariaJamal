@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import PropertyCard from '@/components/properties/PropertyCard';
 import Button from '@/components/ui/Button';
+import SkeletonCard from '@/components/ui/SkeletonCard';
 import { fetchProperties, Property } from '@/lib/api';
 
 const FeaturedProperties = () => {
@@ -13,6 +14,9 @@ const FeaturedProperties = () => {
   useEffect(() => {
     async function loadFeaturedProperties() {
       try {
+        // Delay artificial de 2 segundos para visualizar o loading
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
         const data = await fetchProperties({
           is_featured: 'true',
           ordering: '-created_at',
@@ -48,18 +52,17 @@ const FeaturedProperties = () => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
-            Propriedades em Destaque
+            Propriedades Mais Procuradas
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore as melhores oportunidades imobiliárias em Moçambique
+            Imóveis com maior interesse dos nossos clientes
           </p>
         </div>
 
         {/* Loading State */}
         {loading && (
-          <div className="text-center py-12">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-4 text-gray-600">Carregando propriedades...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <SkeletonCard type="property" count={6} />
           </div>
         )}
 

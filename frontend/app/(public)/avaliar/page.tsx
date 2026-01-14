@@ -7,6 +7,7 @@ import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Card from '@/components/ui/Card';
 import { submitEvaluation } from '@/lib/api';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 export default function AvaliarPage() {
   const [step, setStep] = useState(1);
@@ -33,13 +34,18 @@ export default function AvaliarPage() {
   ];
 
   const locations = [
-    { value: '', label: 'Selecione a localização' },
-    { value: 'Maputo', label: 'Maputo' },
-    { value: 'Matola', label: 'Matola' },
-    { value: 'Beira', label: 'Beira' },
-    { value: 'Nampula', label: 'Nampula' },
+    { value: '', label: 'Selecione a província' },
+    { value: 'Maputo Cidade', label: 'Maputo Cidade' },
+    { value: 'Maputo Província', label: 'Maputo Província' },
+    { value: 'Gaza', label: 'Gaza' },
+    { value: 'Inhambane', label: 'Inhambane' },
+    { value: 'Sofala', label: 'Sofala' },
+    { value: 'Manica', label: 'Manica' },
     { value: 'Tete', label: 'Tete' },
-    { value: 'Outros', label: 'Outros' },
+    { value: 'Zambézia', label: 'Zambézia' },
+    { value: 'Nampula', label: 'Nampula' },
+    { value: 'Cabo Delgado', label: 'Cabo Delgado' },
+    { value: 'Niassa', label: 'Niassa' },
   ];
 
   const handleInputChange = (field: string, value: string) => {
@@ -65,6 +71,8 @@ export default function AvaliarPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <LoadingOverlay isOpen={loading} message="Enviando pedido de avaliação" type="property" />
+      
       {/* Page Header */}
       <div className="bg-gradient-to-r from-primary to-primary-600 text-white py-12">
         <div className="container mx-auto px-4">
@@ -162,7 +170,7 @@ export default function AvaliarPage() {
                           required
                         />
                         <Select
-                          label="Localização"
+                          label="Província"
                           options={locations}
                           value={formData.location}
                           onChange={(e) => handleInputChange('location', e.target.value)}

@@ -9,8 +9,8 @@ import Button from '@/components/ui/Button';
 import { createProperty } from '@/lib/api';
 import { FiSave, FiX, FiChevronDown, FiChevronUp, FiHome, FiMapPin, FiDollarSign, FiGrid, FiStar, FiSettings, FiImage, FiLock } from 'react-icons/fi';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function NovaPropriedadePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -111,7 +111,7 @@ export default function NovaPropriedadePage() {
   useEffect(() => {
     async function loadAgents() {
       try {
-        const response = await fetch(`${API_URL}/api/agents/`);
+        const response = await fetch(`${API_URL}/agents/`);
         const data = await response.json();
         setAgents(data.results || data || []);
       } catch (err) {
@@ -191,7 +191,9 @@ export default function NovaPropriedadePage() {
         if (key === 'amenities') return;
         const value = formData[key as keyof typeof formData];
         if (value !== null && value !== undefined && value !== '') {
-          formDataToSend.append(key, String(value));
+          // Converter agent para agent_id
+          const fieldName = key === 'agent' ? 'agent_id' : key;
+          formDataToSend.append(fieldName, String(value));
         }
       });
       
@@ -216,7 +218,7 @@ export default function NovaPropriedadePage() {
       });
       
       // Enviar para API
-      const response = await fetch(`${API_URL}/api/properties/`, {
+      const response = await fetch(`${API_URL}/properties/`, {
         method: 'POST',
         body: formDataToSend,
         // NÃO definir Content-Type - o browser faz isso automaticamente com boundary correto
@@ -241,7 +243,7 @@ export default function NovaPropriedadePage() {
       <div className="p-4 md:p-6 lg:p-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <div className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl p-6 md:p-8 shadow-lg">
+          <div className="bg-primary text-white rounded-xl p-6 md:p-8 shadow-lg">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">✨ Nova Propriedade</h1>
             <p className="text-primary-50 text-sm md:text-base">Preencha os campos obrigatórios marcados com * e expanda as seções para adicionar mais detalhes</p>
           </div>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FiHeart, FiTrash2, FiArrowLeft } from 'react-icons/fi';
 import PropertyCard from '@/components/properties/PropertyCard';
 import Button from '@/components/ui/Button';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useFavorites } from '@/lib/useFavorites';
 
 export default function FavoritosPage() {
@@ -13,7 +14,7 @@ export default function FavoritosPage() {
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">Carregando favoritos...</p>
+        <LoadingSpinner size="lg" text="Carregando favoritos..." centered />
       </div>
     );
   }
