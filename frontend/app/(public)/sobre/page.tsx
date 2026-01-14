@@ -4,10 +4,40 @@ import Link from 'next/link';
 import { FiAward, FiUsers, FiTrendingUp, FiShield, FiCheckCircle, FiTarget } from 'react-icons/fi';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { Metadata } from 'next';
+import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 
-export const metadata = {
-  title: 'Sobre Nós | IJPS - Imobiliária Jamal & Prestação de Serviços',
-  description: 'Conheça a IJPS, sua parceira de confiança no mercado imobiliário moçambicano há mais de 10 anos.',
+export const metadata: Metadata = {
+  title: 'Sobre a IJPS | Imobiliária Líder em Moçambique há mais de 10 Anos',
+  description: 'Conheça a IJPS, imobiliária de referência em Moçambique há mais de 10 anos. Equipa experiente, transparência total e compromisso com a excelência no mercado imobiliário moçambicano.',
+  keywords: ['IJPS imobiliária', 'sobre IJPS', 'imobiliária Moçambique', 'história IJPS', 'equipa imobiliária', 'valores IJPS', 'experiência mercado imobiliário'],
+  openGraph: {
+    title: 'Sobre a IJPS | Imobiliária de Confiança em Moçambique',
+    description: 'Mais de 10 anos de experiência no mercado imobiliário moçambicano. Conheça nossa história, valores e equipa.',
+    type: 'website',
+    locale: 'pt_MZ',
+    url: 'https://ijps.co.mz/sobre',
+    siteName: 'IJPS - Imobiliária Jamal & Prestação de Serviços',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sobre a IJPS | Imobiliária Moçambique',
+    description: 'Mais de 10 anos de experiência no mercado imobiliário moçambicano.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: 'https://ijps.co.mz/sobre',
+  },
 };
 
 export default function SobrePage() {
@@ -72,6 +102,12 @@ export default function SobrePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* SEO Schema */}
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Sobre', url: '/sobre' },
+      ]} />
+      
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-secondary to-secondary-700 text-white py-16 md:py-24">
         <div className="container mx-auto px-4">

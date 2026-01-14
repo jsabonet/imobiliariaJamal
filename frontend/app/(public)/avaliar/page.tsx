@@ -6,6 +6,8 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Card from '@/components/ui/Card';
+import DynamicSEO from '@/components/seo/DynamicSEO';
+import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import { submitEvaluation } from '@/lib/api';
 import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
@@ -71,6 +73,18 @@ export default function AvaliarPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* SEO */}
+      <DynamicSEO
+        title="Avaliação de Propriedades"
+        description="Solicite avaliação profissional do seu imóvel em Moçambique. Avaliação gratuita, rápida e sem compromisso. Conheça o valor real da sua propriedade no mercado."
+        keywords={['avaliação imóveis Moçambique', 'avaliar propriedade', 'valor imóvel Maputo', 'avaliação gratuita', 'quanto vale meu imóvel', 'avaliação profissional']}
+        canonical="https://ijps.co.mz/avaliar"
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Avaliar Propriedade', url: '/avaliar' },
+      ]} />
+      
       <LoadingOverlay isOpen={loading} message="Enviando pedido de avaliação" type="property" />
       
       {/* Page Header */}

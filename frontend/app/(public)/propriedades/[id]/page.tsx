@@ -11,6 +11,9 @@ import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
 import MapPlaceholder from '@/components/ui/MapPlaceholder';
+import PropertySchema from '@/components/seo/PropertySchema';
+import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
+import DynamicSEO from '@/components/seo/DynamicSEO';
 import { fetchPropertyById, submitContact } from '@/lib/api';
 import { useFavorites } from '@/lib/useFavorites';
 
@@ -177,8 +180,33 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     return null;
   }
 
+  const propertyKeywords = [
+    property.type,
+    property.location,
+    property.city,
+    property.province,
+    'propriedade Moçambique',
+    property.status === 'sale' ? 'venda' : 'arrendamento',
+    `${property.bedrooms} quartos`,
+  ].filter(Boolean);
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* SEO */}
+      <DynamicSEO
+        title={property.title}
+        description={`${property.type} em ${property.location} - ${property.bedrooms} quartos, ${property.area}m². ${property.description.substring(0, 100)}...`}
+        keywords={propertyKeywords}
+        canonical={`https://ijps.co.mz/propriedades/${property.id}`}
+        ogImage={property.images[0]}
+      />
+      <PropertySchema property={property} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Propriedades', url: '/propriedades' },
+        { name: property.title, url: `/propriedades/${property.id}` },
+      ]} />
+      
       {/* Image Gallery */}
       <div className="bg-black">
         <div className="container mx-auto px-4 py-4">

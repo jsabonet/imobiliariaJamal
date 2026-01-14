@@ -1,0 +1,27 @@
+# Robots.txt para IJPS Imobiliária
+# Permitir todos os bots de pesquisa
+
+User-agent: *
+Allow: /
+
+# Desallow admin areas
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+
+# Allow important pages
+Allow: /
+Allow: /propriedades
+Allow: /propriedades/*
+Allow: /servicos
+Allow: /sobre
+Allow: /contacto
+Allow: /avaliar
+
+# Sitemaps
+Sitemap: https://imobiliariajamal.com/sitemap.xml
+Sitemap: https://imobiliariajamal.com/sitemap-properties.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1

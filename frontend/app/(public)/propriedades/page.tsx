@@ -9,6 +9,8 @@ import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import Pagination from '@/components/ui/Pagination';
+import DynamicSEO from '@/components/seo/DynamicSEO';
+import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import { fetchProperties, PaginatedResponse, Property as ApiProperty } from '@/lib/api';
 
 export default function PropriedadesPage() {
@@ -257,6 +259,18 @@ export default function PropriedadesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* SEO */}
+      <DynamicSEO
+        title="Propriedades em Moçambique - Compra e Arrendamento"
+        description="Encontre as melhores propriedades em Moçambique. Casas, apartamentos, vivendas e terrenos para venda e arrendamento em Maputo e todo o país."
+        keywords={['propriedades Moçambique', 'imóveis Maputo', 'casas venda', 'apartamentos arrendamento', 'imóveis Moçambique', 'comprar casa Maputo']}
+        canonical="https://ijps.co.mz/propriedades"
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Propriedades', url: '/propriedades' },
+      ]} />
+      
       {/* Page Header */}
       <div className="bg-gradient-to-r from-secondary to-secondary-700 text-white py-12">
         <div className="container mx-auto px-4">

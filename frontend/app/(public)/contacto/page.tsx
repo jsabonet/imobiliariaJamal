@@ -6,6 +6,8 @@ import { FaWhatsapp, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa'
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
+import DynamicSEO from '@/components/seo/DynamicSEO';
+import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import { submitContact } from '@/lib/api';
 import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
@@ -108,6 +110,18 @@ export default function ContactoPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* SEO */}
+      <DynamicSEO
+        title="Contacto"
+        description="Entre em contacto com a IJPS. Estamos em Maputo, Moçambique. Telefone: +258 84 000 0000 | Email: info@ijps.co.mz | WhatsApp disponível."
+        keywords={['contacto IJPS', 'imobiliária Maputo contacto', 'telefone IJPS', 'email IJPS', 'WhatsApp imobiliária', 'endereço IJPS Maputo']}
+        canonical="https://ijps.co.mz/contacto"
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Contacto', url: '/contacto' },
+      ]} />
+      
       <LoadingOverlay isOpen={loading} message="Enviando mensagem" type="form" />
       
       {/* Hero Section */}
