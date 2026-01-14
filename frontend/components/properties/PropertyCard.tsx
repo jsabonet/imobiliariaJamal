@@ -112,22 +112,21 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   };
 
   return (
-    <Card 
-      hover 
-      className="group overflow-hidden"
+    <div
       onMouseEnter={() => setShowQuickActions(true)}
       onMouseLeave={() => setShowQuickActions(false)}
     >
-      <Link href={`/propriedades/${property.id}`}>
-        {/* Image Container */}
-        <div className="relative h-56 sm:h-64 overflow-hidden bg-gray-200">
-          {/* Skeleton loader */}
-          {!imageLoaded && (
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
-          )}
-          
-          {/* Gradient overlay for better badge visibility */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 z-10" />
+      <Card hover className="group overflow-hidden">
+        <Link href={`/propriedades/${property.id}`}>
+          {/* Image Container */}
+          <div className="relative h-56 sm:h-64 overflow-hidden bg-gray-200">
+            {/* Skeleton loader */}
+            {!imageLoaded && (
+              <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+            )}
+            
+            {/* Gradient overlay for better badge visibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 z-10" />
           
           <Image
             src={property.image}
@@ -299,6 +298,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         </div>
       </Link>
     </Card>
+    </div>
   );
 };
 
