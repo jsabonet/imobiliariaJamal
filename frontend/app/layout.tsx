@@ -50,12 +50,6 @@ export default function RootLayout({
   return (
     <html lang="pt">
       <head>
-        <link
-          rel="preload"
-          as="image"
-          href="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&h=1080&fit=crop&q=80"
-          type="image/jpeg"
-        />
         <link rel="apple-touch-icon" href="/logo.png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

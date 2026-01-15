@@ -2,9 +2,19 @@
  * Configuração centralizada da API
  * Usa variável de ambiente em produção e localhost em desenvolvimento
  */
-export const API_BASE_URL = typeof window !== 'undefined' 
-  ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api')
-  : (process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000/api');
+const getApiBaseUrl = () => {
+  const baseUrl = typeof window !== 'undefined' 
+    ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api')
+    : (process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000/api');
+  
+  // Garantir que sempre termina com /api
+  if (baseUrl.endsWith('/api')) return baseUrl;
+  if (baseUrl.endsWith('/api/')) return baseUrl.slice(0, -1);
+  if (baseUrl.endsWith('/')) return `${baseUrl}api`;
+  return `${baseUrl}/api`;
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export const API_ENDPOINTS = {
   properties: `${API_BASE_URL}/properties/`,
