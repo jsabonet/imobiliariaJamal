@@ -240,12 +240,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           </div>
 
           {/* Thumbnails */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             {property.images.map((image: string, index: number) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`relative h-20 md:h-24 rounded-lg overflow-hidden ${
+                className={`relative h-20 md:h-24 w-32 md:w-36 flex-shrink-0 rounded-lg overflow-hidden ${
                   currentImageIndex === index ? 'ring-4 ring-primary' : ''
                 }`}
               >

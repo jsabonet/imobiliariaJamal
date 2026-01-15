@@ -108,7 +108,7 @@ const Services = () => {
               <Link href={service.link}>
                 <div className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 h-full border border-gray-100">
                   {/* Image Section */}
-                  <div className="relative h-56 overflow-hidden bg-gray-200">
+                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-gray-200">
                     <Image
                       src={service.image}
                       alt={service.title}
@@ -175,7 +175,7 @@ const Services = () => {
                     <Link href={service.link}>
                       <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 mx-2">
                         {/* Image Section */}
-                        <div className="relative h-48 overflow-hidden bg-gray-200">
+                        <div className="relative w-full aspect-[16/10] overflow-hidden bg-gray-200">
                           <Image
                             src={service.image}
                             alt={service.title}

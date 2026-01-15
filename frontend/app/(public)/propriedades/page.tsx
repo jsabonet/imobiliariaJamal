@@ -429,6 +429,43 @@ export default function PropriedadesPage() {
 
           {/* Main Content */}
           <main className="lg:col-span-3">
+            {/* Mobile Quick Filters - Always Visible */}
+            <div className="lg:hidden mb-4 space-y-3">
+              {/* Search Bar */}
+              <Input
+                placeholder="Pesquisar propriedades..."
+                icon={<FiSearch size={18} />}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+              
+              {/* Quick Filter Chips */}
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+                <Select 
+                  options={[
+                    { value: 'all', label: 'Todos' },
+                    { value: 'venda', label: 'Comprar' },
+                    { value: 'arrendamento', label: 'Arrendar' },
+                  ]} 
+                  value={filters.status}
+                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                  className="min-w-[120px]"
+                />
+                <Select 
+                  options={propertyTypes} 
+                  value={filters.type}
+                  onChange={(e) => handleFilterChange('type', e.target.value)}
+                  className="min-w-[140px]"
+                />
+                <Select 
+                  options={priceRanges} 
+                  value={filters.priceRange}
+                  onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+                  className="min-w-[140px]"
+                />
+              </div>
+            </div>
+
             {/* Mobile Filters Toggle & Sort */}
             <div className="flex gap-4 mb-6">
               <Button
@@ -437,7 +474,7 @@ export default function PropriedadesPage() {
                 onClick={() => setShowFilters(true)}
               >
                 <FiSliders className="mr-2" />
-                Filtros
+                Mais Filtros
               </Button>
               <div className="flex-1">
                 <Select 
