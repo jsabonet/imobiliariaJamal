@@ -92,10 +92,10 @@ export default function InstallPWA() {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-md z-50 animate-slide-up">
-      <div className="bg-gradient-to-br from-primary to-primary-600 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="bg-gradient-to-br from-secondary to-secondary-800 rounded-2xl shadow-2xl overflow-hidden border border-secondary-700">
         <div className="p-6">
           <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+            <div className="flex-shrink-0 w-14 h-14 bg-primary rounded-xl flex items-center justify-center shadow-lg">
               <FiSmartphone className="text-white" size={28} />
             </div>
             
@@ -103,14 +103,14 @@ export default function InstallPWA() {
               <h3 className="text-xl font-bold text-white mb-2">
                 Instalar App IJPS
               </h3>
-              <p className="text-sm text-primary-100 mb-4 leading-relaxed">
+              <p className="text-sm text-gray-300 mb-4 leading-relaxed">
                 Acesso rápido, notificações e funciona sem internet. Instale agora!
               </p>
               
               <div className="flex gap-3">
                 <button
                   onClick={handleInstall}
-                  className="flex-1 bg-white hover:bg-gray-100 text-primary font-bold py-3 px-5 rounded-xl transition-all transform hover:scale-105 shadow-lg"
+                  className="flex-1 bg-primary hover:bg-primary-600 text-white font-bold py-3 px-5 rounded-xl transition-all transform hover:scale-105 shadow-lg"
                 >
                   <span className="flex items-center justify-center gap-2">
                     <FiDownload size={18} />
@@ -119,7 +119,7 @@ export default function InstallPWA() {
                 </button>
                 <button
                   onClick={handleDismiss}
-                  className="px-4 py-3 text-white/90 hover:text-white font-medium transition-colors"
+                  className="px-4 py-3 text-gray-300 hover:text-white font-medium transition-colors"
                 >
                   Mais tarde
                 </button>
@@ -128,7 +128,7 @@ export default function InstallPWA() {
             
             <button
               onClick={handleDismiss}
-              className="flex-shrink-0 p-1 text-white/70 hover:text-white transition-colors"
+              className="flex-shrink-0 p-1 text-gray-400 hover:text-white transition-colors"
               aria-label="Fechar"
             >
               <FiX size={22} />
