@@ -71,19 +71,25 @@ self.addEventListener('fetch', (event) => {
 
   // Handle API requests - Network first, fallback to cache
   if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const responseClone = response.clone();
-          caches.open(RUNTIME_CACHE).then((cache) => {
-            cache.put(request, responseClone);
-          });
-          return response;
-        })
-        .catch(() => {
-          return caches.match(request);
-        })
-    );
+    // Only cache GET requests, not POST/PUT/DELETE
+    if (request.method === 'GET') {
+      event.respondWith(
+        fetch(request)
+          .then((response) => {
+            const responseClone = response.clone();
+            caches.open(RUNTIME_CACHE).then((cache) => {
+              cache.put(request, responseClone);
+            });
+            return response;
+          })
+          .catch(() => {
+            return caches.match(request);
+          })
+      );
+    } else {
+      // For POST/PUT/DELETE, just fetch without caching
+      event.respondWith(fetch(request));
+    }
     return;
   }
 
