@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Generate PWA Icons</title>
+</head>
+<body>
+  <h1>Gerador de Ícones PWA - IJPS</h1>
+  <canvas id="canvas" style="border: 1px solid #ccc;"></canvas>
+  <br><br>
+  <button onclick="generateIcons()">Gerar Todos os Ícones</button>
+  <div id="downloads"></div>
+
+  <script>
+    const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+    
+    function drawIcon(ctx, size) {
+      const scale = size / 512;
+      
+      // Background
+      ctx.fillStyle = '#1E40AF';
+      const radius = 110 * scale;
+      roundRect(ctx, 0, 0, size, size, radius, true);
+      
+      // Center point
+      const cx = size / 2;
+      const cy = size / 2;
+      
+      // Roof
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(scale, scale);
+      
+      ctx.fillStyle = '#FBBF24';
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 8;
+      ctx.lineJoin = 'round';
+      
+      ctx.beginPath();
+      ctx.moveTo(-120, -60);
+      ctx.lineTo(0, -150);
+      ctx.lineTo(120, -60);
+      ctx.lineTo(100, -60);
+      ctx.lineTo(100, 100);
+      ctx.lineTo(-100, 100);
+      ctx.lineTo(-100, -60);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      
+      // Main Building
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(-100, -60, 200, 160);
+      
+      // Door
+      ctx.fillStyle = '#1E40AF';
+      roundRect(ctx, -30, 30, 60, 70, 5, true);
+      
+      // Door handle
+      ctx.fillStyle = '#FBBF24';
+      ctx.beginPath();
+      ctx.arc(10, 65, 4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Windows
+      ctx.fillStyle = '#60A5FA';
+      roundRect(ctx, -75, -20, 35, 35, 3, true);
+      roundRect(ctx, 40, -20, 35, 35, 3, true);
+      
+      // Window panes
+      ctx.strokeStyle = '#1E40AF';
+      ctx.lineWidth = 2;
+      
+      // Left window
+      ctx.beginPath();
+      ctx.moveTo(-57.5, -20);
+      ctx.lineTo(-57.5, 15);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(-75, -2.5);
+      ctx.lineTo(-40, -2.5);
+      ctx.stroke();
+      
+      // Right window
+      ctx.beginPath();
+      ctx.moveTo(57.5, -20);
+      ctx.lineTo(57.5, 15);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(40, -2.5);
+      ctx.lineTo(75, -2.5);
+      ctx.stroke();
+      
+      // Chimney
+      ctx.fillStyle = '#DC2626';
+      ctx.fillRect(60, -140, 30, 60);
+      
+      // IJPS Text
+      ctx.fillStyle = '#FBBF24';
+      ctx.font = `bold ${36}px Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('IJPS', 0, 150);
+      
+      ctx.restore();
+    }
+    
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+    
+    function generateIcons() {
+      const downloads = document.getElementById('downloads');
+      downloads.innerHTML = '<h2>Clique para baixar:</h2>';
+      
+      sizes.forEach(size => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        
+        drawIcon(ctx, size);
+        
+        canvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `icon-${size}x${size}.png`;
+          link.textContent = `icon-${size}x${size}.png`;
+          link.style.display = 'block';
+          link.style.margin = '5px 0';
+          downloads.appendChild(link);
+        });
+      });
+    }
+    
+    // Draw preview
+    const canvas = document.getElementById('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    drawIcon(ctx, 512);
+  </script>
+</body>
+</html>
