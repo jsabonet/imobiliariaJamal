@@ -39,6 +39,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
 
+  const formatPropertyType = (type: string) => {
+    return type
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   const formatPrice = (price: number) => {
     const currencyCode = property.currency || 'MZN';
     return new Intl.NumberFormat('pt-PT', {
@@ -149,11 +157,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
                 Novo
               </Badge>
             )}
-            {property.featured && (
-              <Badge variant="warning" className="backdrop-blur-sm bg-opacity-95 shadow-md">
-                Destaque
-              </Badge>
-            )}
             {property.status && (
               <Badge 
                 variant={property.status === 'venda' ? 'info' : 'success'}
@@ -163,17 +166,28 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
               </Badge>
             )}
             <Badge className="backdrop-blur-sm bg-opacity-95 shadow-md">
-              {property.type}
+              {formatPropertyType(property.type)}
             </Badge>
           </div>
 
-          {/* Image count */}
-          {property.imageCount && property.imageCount > 1 && (
-            <div className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white px-2.5 py-1.5 rounded-lg text-xs font-medium">
-              <FiCamera size={14} />
-              <span>{property.imageCount}</span>
-            </div>
-          )}
+          {/* Top right badges */}
+          <div className="absolute top-3 right-3 z-20 flex flex-col gap-2 items-end">
+            {/* Verified Badge */}
+            {property.verified && (
+              <div className="flex items-center gap-1.5 bg-accent/95 backdrop-blur-sm text-white px-2.5 py-1.5 rounded-full text-xs font-medium shadow-md">
+                <FaCheckCircle size={12} />
+                <span className="hidden sm:inline">Verificado</span>
+              </div>
+            )}
+            
+            {/* Image count */}
+            {property.imageCount && property.imageCount > 1 && (
+              <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white px-2.5 py-1.5 rounded-lg text-xs font-medium">
+                <FiCamera size={14} />
+                <span>{property.imageCount}</span>
+              </div>
+            )}
+          </div>
 
           {/* Quick Actions - Desktop */}
           <div 
@@ -212,7 +226,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
 
           {/* Favorite Button - Mobile */}
           <button
-            className={`sm:hidden absolute top-3 right-3 z-20 p-2 rounded-full shadow-lg transition-all backdrop-blur-sm ${
+            className={`sm:hidden absolute bottom-3 right-3 z-20 p-2.5 rounded-full shadow-lg transition-all backdrop-blur-sm ${
               favorited 
                 ? 'bg-red-500/90 text-white hover:bg-red-600/90' 
                 : 'bg-white/90 text-gray-700 hover:bg-primary hover:text-white'
@@ -223,13 +237,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             <FiHeart size={18} fill={favorited ? 'currentColor' : 'none'} />
           </button>
 
-          {/* Verified Badge */}
-          {property.verified && (
-            <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1.5 bg-accent/95 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium shadow-lg">
-              <FaCheckCircle size={14} />
-              <span className="hidden sm:inline">Verificado</span>
-            </div>
-          )}
         </div>
 
         {/* Content */}
