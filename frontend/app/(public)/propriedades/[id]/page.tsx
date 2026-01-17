@@ -126,12 +126,73 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   }, [params.id, API_BASE]);
 
   function formatPrice(price: number): string {
+    const currencyCode = property?.currency || 'MZN';
     const formatted = new Intl.NumberFormat('pt-PT', {
       style: 'currency',
-      currency: 'MZN',
+      currency: currencyCode,
       minimumFractionDigits: 0,
     }).format(price);
     return formatted.replace(/MT/g, 'MZN');
+  }
+
+  // Funções de formatação para valores legíveis
+  function formatCondition(condition: string): string {
+    const conditions: Record<string, string> = {
+      'novo': 'Novo',
+      'excelente': 'Excelente',
+      'bom': 'Bom',
+      'para_renovar': 'Para Renovar',
+      'em_construcao': 'Em Construção',
+    };
+    return conditions[condition] || condition;
+  }
+
+  function formatLegalStatus(status: string): string {
+    const statuses: Record<string, string> = {
+      'escritura': 'Escritura',
+      'direito_uso': 'Direito de Uso (DUAT)',
+      'contrato_promessa': 'Contrato Promessa',
+      'posse': 'Posse',
+      'em_regularizacao': 'Em Regularização',
+    };
+    return statuses[status] || status;
+  }
+
+  function formatOrientation(orientation: string): string {
+    const orientations: Record<string, string> = {
+      'norte': 'Norte',
+      'sul': 'Sul',
+      'este': 'Este',
+      'oeste': 'Oeste',
+      'nordeste': 'Nordeste',
+      'noroeste': 'Noroeste',
+      'sudeste': 'Sudeste',
+      'sudoeste': 'Sudoeste',
+    };
+    return orientations[orientation] || orientation;
+  }
+
+  function formatHeatingType(heating: string): string {
+    const types: Record<string, string> = {
+      'ar_condicionado': 'Ar Condicionado',
+      'aquecimento_central': 'Aquecimento Central',
+      'lareira': 'Lareira',
+      'piso_radiante': 'Piso Radiante',
+      'bomba_calor': 'Bomba de Calor',
+      'paineis_solares': 'Painéis Solares',
+      'nao_aplicavel': 'Não Aplicável',
+    };
+    return types[heating] || heating;
+  }
+
+  function formatDate(dateString: string): string {
+    if (!dateString || dateString === '—') return '—';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-PT', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   }
 
   function handleFavoriteClick(): void {
@@ -446,7 +507,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Estado de Conservação</p>
-                    <p className="font-semibold">{property.details.condition}</p>
+                    <p className="font-semibold">{formatCondition(property.details.condition)}</p>
                   </div>
                   {property.details.floor !== '—' && (
                     <div>
@@ -459,12 +520,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   )}
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Documentação</p>
-                    <p className="font-semibold">{property.details.documentation}</p>
+                    <p className="font-semibold">{formatLegalStatus(property.details.documentation)}</p>
                   </div>
                   {property.details.orientation !== '—' && (
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Orientação Solar</p>
-                      <p className="font-semibold">{property.details.orientation}</p>
+                      <p className="font-semibold">{formatOrientation(property.details.orientation)}</p>
                     </div>
                   )}
                   {property.details.energyClass !== '—' && (
@@ -476,12 +537,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   {property.details.heatingType !== '—' && (
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Climatização</p>
-                      <p className="font-semibold">{property.details.heatingType}</p>
+                      <p className="font-semibold">{formatHeatingType(property.details.heatingType)}</p>
                     </div>
                   )}
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Disponibilidade</p>
-                    <p className="font-semibold">{property.details.availability}</p>
+                    <p className="font-semibold">{formatDate(property.details.availability)}</p>
                   </div>
                 </div>
                 

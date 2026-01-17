@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import PropertyCard from '@/components/properties/PropertyCard';
 import { FiSearch, FiSliders } from 'react-icons/fi';
@@ -26,9 +26,6 @@ export default function PropriedadesPage() {
   
   // Search input state for debounce
   const [searchInput, setSearchInput] = useState('');
-  
-  // Cache for results
-  const cacheRef = useRef<Map<string, PaginatedResponse<ApiProperty>>>(new Map());
   
   // Filter states
   const [filters, setFilters] = useState({
@@ -108,33 +105,11 @@ export default function PropriedadesPage() {
         else if (filters.ordering === 'area') params.ordering = '-area';
         else params.ordering = '-created_at';
         
-        // Create cache key from params
-        const cacheKey = JSON.stringify(params);
-        
-        // Check cache first
-        const cachedData = cacheRef.current.get(cacheKey);
-        if (cachedData) {
-          if (mounted) {
-            setResults(cachedData);
-            setLoading(false);
-          }
-          return;
-        }
-        
+        // Buscar dados sempre frescos (sem cache)
         const data = await fetchProperties(params);
         
         if (mounted) {
           setResults(data);
-          // Store in cache
-          cacheRef.current.set(cacheKey, data);
-          
-          // Limit cache size to 20 entries
-          if (cacheRef.current.size > 20) {
-            const firstKey = cacheRef.current.keys().next().value;
-            if (firstKey) {
-              cacheRef.current.delete(firstKey);
-            }
-          }
         }
       } catch (e: any) {
         if (mounted) setError(e.message || 'Falha ao carregar propriedades');
@@ -213,8 +188,6 @@ export default function PropriedadesPage() {
       ordering: 'recent',
       status: 'all',
     });
-    // Clear cache when filters are cleared
-    cacheRef.current.clear();
   };
 
   const loadPage = async (url: string) => {
@@ -233,7 +206,7 @@ export default function PropriedadesPage() {
 
   const properties = useMemo(() => {
     if (!results) return [] as Array<{
-      id: number; title: string; location: string; price: number; type: string; bedrooms: number; bathrooms: number; area: number; image: string; verified?: boolean; featured?: boolean;
+      id: number; title: string; location: string; price: number; type: string; bedrooms: number; bathrooms: number; area: number; image: string; verified?: boolean; featured?: boolean; currency?: string;
     }>;
     return (results.results || []).map((p) => {
       const images = Array.isArray(p.images) ? p.images : [];
@@ -253,6 +226,7 @@ export default function PropriedadesPage() {
         image: imageUrl,
         verified: !!(p as any).is_verified,
         featured: !!p.is_featured,
+        currency: (p as any).currency || 'MZN',
       };
     });
   }, [results, API_BASE]);

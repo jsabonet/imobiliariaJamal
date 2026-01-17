@@ -26,6 +26,7 @@ interface Property {
   createdAt?: string;
   imageCount?: number;
   negotiable?: boolean;
+  currency?: string;
 }
 
 interface PropertyCardProps {
@@ -39,9 +40,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   const [showQuickActions, setShowQuickActions] = useState(false);
 
   const formatPrice = (price: number) => {
+    const currencyCode = property.currency || 'MZN';
     return new Intl.NumberFormat('pt-PT', {
       style: 'currency',
-      currency: 'MZN',
+      currency: currencyCode,
       minimumFractionDigits: 0,
     }).format(price).replace(/MT/g, 'MZN');
   };

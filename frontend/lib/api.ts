@@ -26,7 +26,7 @@ const API_URL = getApiUrl();
 export async function fetchProperties(params?: Record<string, string | number>) {
   const queryString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : '';
   const res = await fetch(`${API_URL}/properties/${queryString}`, { 
-    next: { revalidate: 60 } 
+    cache: 'no-store'
   });
   if (!res.ok) throw new Error('Falha ao buscar propriedades');
   return res.json();
@@ -39,7 +39,7 @@ export async function fetchProperties(params?: Record<string, string | number>) 
  */
 export async function fetchPropertyById(id: string) {
   const res = await fetch(`${API_URL}/properties/${id}/`, { 
-    next: { revalidate: 60 } 
+    cache: 'no-store'
   });
   if (!res.ok) throw new Error('Falha ao buscar propriedade');
   return res.json();
@@ -69,7 +69,7 @@ export async function incrementPropertyView(id: string) {
  */
 export async function fetchAgents() {
   const res = await fetch(`${API_URL}/agents/`, { 
-    next: { revalidate: 300 } 
+    cache: 'no-store'
   });
   if (!res.ok) throw new Error('Falha ao buscar agentes');
   return res.json();
