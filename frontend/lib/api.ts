@@ -282,6 +282,7 @@ export interface Property {
   description: string;
   location: string;
   price: string;
+  currency?: string;
   type: 'apartamento' | 'casa' | 'terreno' | 'comercial' | 'condominio';
   status: 'venda' | 'arrendamento';
   bedrooms: number;
