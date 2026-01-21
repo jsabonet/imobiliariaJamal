@@ -776,7 +776,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                     Visite esta propriedade pessoalmente
                   </p>
                   <a
-                    href={`https://wa.me/${(property.agent?.phone || '+258840000000').replace(/\s/g, '')}?text=${encodeURIComponent(`Olá! Gostaria de agendar uma visita para a propriedade: ${property.title} (Ref: ${property.referenceCode || property.id})`)}`}
+                    href={`https://wa.me/${(property.agent?.phone || '+258841339593').replace(/\s/g, '')}?text=${encodeURIComponent(`Olá! Gostaria de agendar uma visita para a propriedade: ${property.title} (Ref: ${property.referenceCode || property.id})`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

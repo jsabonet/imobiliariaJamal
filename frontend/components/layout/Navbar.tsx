@@ -26,9 +26,9 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-2 text-sm">
             <div className="flex gap-6">
-              <a href="tel:+258840000000" className="flex items-center gap-2 hover:text-primary-200 transition">
+              <a href="tel:+258820061863" className="flex items-center gap-2 hover:text-primary-200 transition">
                 <FiPhone size={14} />
-                +258 84 000 0000
+                +258 82 006 1863
               </a>
               <a href="mailto:anilton.jm13@gmail.com" className="flex items-center gap-2 hover:text-primary-200 transition">
                 <FiMail size={16} />
@@ -37,7 +37,7 @@ const Navbar = () => {
             </div>
             <div className="flex gap-4">
               <a 
-                href="https://wa.me/258840000000" 
+                href="https://wa.me/258841339593" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-accent-300 transition"
@@ -146,12 +146,12 @@ const Navbar = () => {
                 </Link>
               </div>
               <div className="flex flex-col gap-3 pt-4 border-t">
-                <a href="tel:+258840000000" className="flex items-center gap-3 text-secondary">
+                <a href="tel:+258820061863" className="flex items-center gap-3 text-secondary">
                   <FiPhone size={20} />
-                  +258 84 000 0000
+                  +258 82 006 1863
                 </a>
                 <a 
-                  href="https://wa.me/258840000000" 
+                  href="https://wa.me/258841339593" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 text-accent-600"
