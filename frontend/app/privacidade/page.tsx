@@ -29,13 +29,13 @@ export default function PrivacidadePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-secondary mb-4">1. Introdução</h2>
             <p className="text-gray-700 mb-4">
-              A IJPS - Imobiliária Jamal & Prestação de Serviços ("IJPS", "nós", "nosso") está 
+              A IJPS - Imobiliária Jamal & Prestação de Serviços (&quot;IJPS&quot;, &quot;nós&quot;, &quot;nosso&quot;) está 
               comprometida em proteger a privacidade e segurança dos dados pessoais de nossos clientes, 
               usuários e visitantes do site.
             </p>
             <p className="text-gray-700 mb-4">
               Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos 
-              suas informações pessoais quando você utiliza nosso site (<strong>www.imobiliariajamal.com</strong>) 
+              suas informações pessoais quando você utiliza nosso site (<strong>www.imobiliariajamal.com</strong>)
               e nossos serviços.
             </p>
             <p className="text-gray-700 mb-4">
@@ -320,7 +320,7 @@ export default function PrivacidadePage() {
               Você pode optar por receber ou não comunicações de marketing. Para cancelar:
             </p>
             <ul className="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-              <li>Clique em "Cancelar inscrição" em qualquer email</li>
+              <li>Clique em &quot;Cancelar inscrição&quot; em qualquer email</li>
               <li>Ajuste preferências na sua conta</li>
               <li>Entre em contato conosco</li>
             </ul>
@@ -393,7 +393,7 @@ export default function PrivacidadePage() {
               <li>Notificação no app/conta</li>
             </ul>
             <p className="text-gray-700 mb-4">
-              A data de "Última atualização" no topo desta página indica quando a política foi revisada.
+              A data de &quot;Última atualização&quot; no topo desta página indica quando a política foi revisada.
             </p>
           </section>
 

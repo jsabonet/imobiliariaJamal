@@ -29,8 +29,8 @@ export default function TermosPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-secondary mb-4">1. Aceitação dos Termos</h2>
             <p className="text-gray-700 mb-4">
-              Ao acessar e utilizar o site da IJPS - Imobiliária Jamal & Prestação de Serviços 
-              (<strong>www.imobiliariajamal.com</strong>), você concorda em cumprir e estar vinculado 
+              Ao acessar e utilizar o site da IJPS - Imobiliária Jamal & Prestação de Serviços
+              (<strong>www.imobiliariajamal.com</strong>), você concorda em cumprir e estar vinculado
               aos seguintes termos e condições de uso.
             </p>
             <p className="text-gray-700 mb-4">
@@ -136,7 +136,7 @@ export default function TermosPage() {
 
             <h3 className="text-xl font-semibold text-secondary-light mb-3">6.2 Marca Registrada</h3>
             <p className="text-gray-700 mb-4">
-              "IJPS", "Imobiliária Jamal & Prestação de Serviços" e outros logos são marcas 
+              &quot;IJPS&quot;, &quot;Imobiliária Jamal & Prestação de Serviços&quot; e outros logos são marcas
               registradas ou marcas comerciais da empresa. O uso não autorizado é estritamente proibido.
             </p>
 
@@ -161,16 +161,16 @@ export default function TermosPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-secondary mb-4">8. Isenção de Responsabilidade</h2>
             
-            <h3 className="text-xl font-semibold text-secondary-light mb-3">8.1 "Como Está"</h3>
+            <h3 className="text-xl font-semibold text-secondary-light mb-3">8.1 &quot;Como Está&quot;</h3>
             <p className="text-gray-700 mb-4">
-              O site e todos os serviços são fornecidos "como estão" e "conforme disponíveis", sem 
+              O site e todos os serviços são fornecidos &quot;como estão&quot; e &quot;conforme disponíveis&quot;, sem
               garantias de qualquer tipo, expressas ou implícitas.
             </p>
 
             <h3 className="text-xl font-semibold text-secondary-light mb-3">8.2 Limitação de Responsabilidade</h3>
             <p className="text-gray-700 mb-4">
-              A IJPS não será responsável por quaisquer danos diretos, indiretos, incidentais, 
-              especiais ou consequenciais resultantes do uso ou incapacidade de usar o site, incluindo 
+              A IJPS não será responsável por quaisquer danos diretos, indiretos, incidentais,
+              especiais ou consequenciais resultantes do uso ou incapacidade de usar o site, incluindo
               mas não limitado a:
             </p>
             <ul className="list-disc pl-6 text-gray-700 mb-4 space-y-2">
