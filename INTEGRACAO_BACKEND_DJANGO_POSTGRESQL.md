@@ -475,7 +475,7 @@ class Command(BaseCommand):
     help = 'Popula dados iniciais'
 
     def handle(self, *args, **options):
-        agent, _ = Agent.objects.get_or_create(name='Agente IJPS', phone='+258840000000')
+        agent, _ = Agent.objects.get_or_create(name='Agente IJPS', phone='+258820061863')
         Property.objects.get_or_create(
             title='Casa Moderna na Somershield',
             defaults={
@@ -621,7 +621,7 @@ Exemplo `POST /api/evaluations/` body:
 {
   "name": "João",
   "email": "joao@example.com",
-  "phone": "+258840000000",
+  "phone": "+258820061863",
   "property_type": "casa",
   "location": "Maputo",
   "details": "Pretendo avaliar para venda"

@@ -1232,13 +1232,13 @@ test: adicionar testes unitários
 
 ### Zawadi Digital
 - **Email**: [a preencher]
-- **Telefone**: [a preencher]
-- **WhatsApp**: [a preencher]
+- **Telefone**: +258 82 006 1863 / +258 84 133 9593
+- **WhatsApp**: +258 84 133 9593
 
 ### IJPS
-- **Email**: info@ijps.co.mz
-- **Telefone**: +258 84 000 0000
-- **Website**: [em desenvolvimento]
+- **Email**: anilton.jm13@gmail.com
+- **Telefone**: +258 82 006 1863 / +258 84 133 9593
+- **Website**: https://imobiliariajamal.com
 
 ---
 

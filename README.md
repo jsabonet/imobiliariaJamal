@@ -368,9 +368,9 @@ Este projeto é fruto da parceria entre:
 ## 📞 Contactos
 
 ### IJPS - Imobiliária
-- **Telefone**: +258 84 000 0000
-- **Email**: info@ijps.co.mz
-- **WhatsApp**: +258 84 000 0000
+- **Telefones**: +258 82 006 1863 / +258 84 133 9593
+- **Email**: anilton.jm13@gmail.com
+- **WhatsApp**: +258 84 133 9593
 - **Localização**: Av. Julius Nyerere, Maputo, Moçambique
 
 ### Zawadi Digital

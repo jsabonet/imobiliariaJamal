@@ -88,23 +88,23 @@ export default function ContactoPage() {
   const departments = [
     {
       name: 'Vendas',
-      email: 'vendas@ijps.co.mz',
-      phone: '+258 84 000 0001',
+      email: 'anilton.jm13@gmail.com',
+      phone: '+258 82 006 1863',
     },
     {
       name: 'Arrendamento',
-      email: 'arrendamento@ijps.co.mz',
-      phone: '+258 84 000 0002',
+      email: 'anilton.jm13@gmail.com',
+      phone: '+258 84 133 9593',
     },
     {
       name: 'Avaliações',
-      email: 'avaliacoes@ijps.co.mz',
-      phone: '+258 84 000 0003',
+      email: 'anilton.jm13@gmail.com',
+      phone: '+258 82 006 1863',
     },
     {
       name: 'Consultoria',
-      email: 'consultoria@ijps.co.mz',
-      phone: '+258 84 000 0004',
+      email: 'anilton.jm13@gmail.com',
+      phone: '+258 84 133 9593',
     },
   ];
 

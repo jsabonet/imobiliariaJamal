@@ -119,8 +119,8 @@ Todas as páginas incluem:
    - Nome: IJPS - Imobiliária Jamal & Prestação de Serviços
    - Categoria: Real Estate Agency
    - Endereço: Av. Julius Nyerere, Maputo, Moçambique
-   - Telefone: +258 84 000 0000
-   - Website: https://ijps.co.mz
+   - Telefone: +258 82 006 1863 / +258 84 133 9593
+   - Website: https://imobiliariajamal.com
    - Horário de funcionamento
    - Fotos do escritório e propriedades
 

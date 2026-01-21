@@ -83,12 +83,12 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
-            <Link
+            {/* <Link
               href="/dashboard"
               className="text-secondary hover:text-primary transition-colors font-semibold border border-primary rounded px-3 py-1 ml-2"
             >
               Área Administrativa
-            </Link>
+            </Link> */}
           </div>
 
           {/* CTA Button - Desktop */}
