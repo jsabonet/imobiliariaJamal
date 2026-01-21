@@ -89,22 +89,22 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Nossos Serviços</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/servicos/avaliacao" className="text-gray-300 hover:text-primary transition">
+                <Link href="/avaliar" className="text-gray-300 hover:text-primary transition">
                   Avaliação de Imóveis
                 </Link>
               </li>
               <li>
-                <Link href="/servicos/venda" className="text-gray-300 hover:text-primary transition">
+                <Link href="/servicos#venda" className="text-gray-300 hover:text-primary transition">
                   Venda de Propriedades
                 </Link>
               </li>
               <li>
-                <Link href="/servicos/arrendamento" className="text-gray-300 hover:text-primary transition">
+                <Link href="/servicos#arrendamento" className="text-gray-300 hover:text-primary transition">
                   Arrendamento
                 </Link>
               </li>
               <li>
-                <Link href="/servicos/consultoria" className="text-gray-300 hover:text-primary transition">
+                <Link href="/servicos#consultoria" className="text-gray-300 hover:text-primary transition">
                   Consultoria
                 </Link>
               </li>
