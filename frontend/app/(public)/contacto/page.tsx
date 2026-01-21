@@ -115,7 +115,7 @@ export default function ContactoPage() {
         title="Contacto"
         description="Entre em contacto com a IJPS. Estamos em Maputo, Moçambique. Telefone: +258 82 006 1863 / +258 84 133 9593 | Email: anilton.jm13@gmail.com | WhatsApp disponível."
         keywords={['contacto IJPS', 'imobiliária Maputo contacto', 'telefone IJPS', 'email IJPS', 'WhatsApp imobiliária', 'endereço IJPS Maputo']}
-        canonical="https://ijps.co.mz/contacto"
+        canonical="https://imobiliariajamal.com/contacto"
       />
       <BreadcrumbSchema items={[
         { name: 'Início', url: '/' },

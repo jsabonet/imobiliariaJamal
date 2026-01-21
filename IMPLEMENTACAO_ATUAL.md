@@ -1104,7 +1104,7 @@ __tests__/
 
 **Configuração .env para produção**:
 ```bash
-NEXT_PUBLIC_API_URL=https://api.ijps.co.mz
+NEXT_PUBLIC_API_URL=https://imobiliariajamal.com/api
 NEXT_PUBLIC_GOOGLE_MAPS_KEY=xxx
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```

@@ -89,14 +89,14 @@ Todas as páginas incluem:
 
 #### Google Search Console
 1. Acesse [Google Search Console](https://search.google.com/search-console)
-2. Adicione a propriedade `https://ijps.co.mz`
+2. Adicione a propriedade `https://imobiliariajamal.com`
 3. Verifique a propriedade:
    - **Método HTML Tag**: Adicione a meta tag no `layout.tsx`
    - **Método DNS**: Adicione TXT record no domínio
    - **Método Google Analytics**: Se já tiver GA instalado
 4. Envie o sitemap:
-   - URL: `https://ijps.co.mz/sitemap.xml`
-   - URL: `https://ijps.co.mz/sitemap-properties.xml`
+   - URL: `https://imobiliariajamal.com/sitemap.xml`
+   - URL: `https://imobiliariajamal.com/sitemap-properties.xml`
 5. Solicite indexação das páginas principais
 
 #### Google Analytics 4

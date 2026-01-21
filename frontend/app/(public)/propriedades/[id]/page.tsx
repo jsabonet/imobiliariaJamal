@@ -258,7 +258,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
         title={property.title}
         description={`${property.type} em ${property.location} - ${property.bedrooms} quartos, ${property.area}m². ${property.description.substring(0, 100)}...`}
         keywords={propertyKeywords}
-        canonical={`https://ijps.co.mz/propriedades/${property.id}`}
+        canonical={`https://imobiliariajamal.com/propriedades/${property.id}`}
         ogImage={property.images[0]}
       />
       <PropertySchema property={property} />
