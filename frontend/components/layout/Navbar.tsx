@@ -83,12 +83,6 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
-            {/* <Link
-              href="/dashboard"
-              className="text-secondary hover:text-primary transition-colors font-semibold border border-primary rounded px-3 py-1 ml-2"
-            >
-              Área Administrativa
-            </Link> */}
           </div>
 
           {/* CTA Button - Desktop */}
@@ -140,9 +134,6 @@ const Navbar = () => {
               <div className="pt-4 border-t flex flex-col gap-2">
                 <Link href="/avaliar" onClick={() => setIsOpen(false)}>
                   <Button fullWidth>Avaliar Imóvel</Button>
-                </Link>
-                <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-                  <Button fullWidth variant="outline">Área Administrativa</Button>
                 </Link>
               </div>
               <div className="flex flex-col gap-3 pt-4 border-t">
