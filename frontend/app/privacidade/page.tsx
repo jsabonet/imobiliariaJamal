@@ -302,8 +302,8 @@ export default function PrivacidadePage() {
               Para exercer qualquer destes direitos, entre em contato conosco através de:
             </p>
             <ul className="list-disc pl-6 text-gray-700 mb-4 space-y-2">
-              <li>Email: privacidade@ijps.co.mz</li>
-              <li>Telefone: +258 84 000 0000</li>
+              <li>Email: anilton.jm13@gmail.com</li>
+              <li>Telefone: +258 82 006 1863 / +258 84 133 9593</li>
               <li>Formulário de contato no site</li>
             </ul>
             <p className="text-gray-700 mb-4">
@@ -420,8 +420,8 @@ export default function PrivacidadePage() {
             </p>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mt-4 mb-6">
               <p className="font-semibold text-secondary mb-2">Encarregado de Proteção de Dados</p>
-              <p className="text-gray-700 mb-1">📧 Email: privacidade@ijps.co.mz</p>
-              <p className="text-gray-700 mb-1">📱 Telefone: +258 84 000 0000</p>
+              <p className="text-gray-700 mb-1">📧 Email: anilton.jm13@gmail.com</p>
+              <p className="text-gray-700 mb-1">📱 Telefone: +258 82 006 1863 / +258 84 133 9593</p>
               <p className="text-gray-700">📍 Endereço: Av. Julius Nyerere, Maputo, Moçambique</p>
             </div>
 
@@ -431,8 +431,6 @@ export default function PrivacidadePage() {
             </p>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mt-4">
               <p className="font-semibold text-secondary mb-2">Autoridade Nacional de Proteção de Dados (ANPPD)</p>
-              <p className="text-gray-700 mb-1">🌐 Website: [URL da ANPPD]</p>
-              <p className="text-gray-700">📧 Email: [Email da ANPPD]</p>
             </div>
           </section>
 

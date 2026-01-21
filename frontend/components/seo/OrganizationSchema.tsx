@@ -24,7 +24,7 @@ export default function OrganizationSchema() {
       '@type': 'ContactPoint',
       telephone: '+258-84-000-0000',
       contactType: 'customer service',
-      email: 'info@ijps.co.mz',
+      email: 'anilton.jm13@gmail.com',
       availableLanguage: ['pt', 'en'],
       areaServed: 'MZ',
     },

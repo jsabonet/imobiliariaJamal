@@ -30,19 +30,19 @@ const CallToAction = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {/* Phone */}
             <a
-              href="tel:+258840000000"
+              href="tel:+258820061863"
               className="bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 rounded-xl p-6 text-center group"
             >
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <FiPhone size={28} />
               </div>
               <h3 className="font-bold text-lg mb-2">Telefone</h3>
-              <p className="text-primary-100">+258 84 000 0000</p>
+              <p className="text-primary-100">+258 82 006 1863</p>
             </a>
 
             {/* WhatsApp */}
             <a
-              href="https://wa.me/258840000000"
+              href="https://wa.me/258841339593"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 rounded-xl p-6 text-center group"
@@ -56,14 +56,14 @@ const CallToAction = () => {
 
             {/* Email */}
             <a
-              href="mailto:info@ijps.co.mz"
+              href="mailto:anilton.jm13@gmail.com"
               className="bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 rounded-xl p-6 text-center group"
             >
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <FiMail size={28} />
               </div>
               <h3 className="font-bold text-lg mb-2">Email</h3>
-              <p className="text-primary-100">info@ijps.co.mz</p>
+              <p className="text-primary-100">anilton.jm13@gmail.com</p>
             </a>
           </div>
 

@@ -52,29 +52,29 @@ export default function ContactoPage() {
     {
       icon: <FiPhone size={28} />,
       title: 'Telefone',
-      content: '+258 84 000 0000',
-      link: 'tel:+258840000000',
+      content: '+258 82 006 1863',
+      link: 'tel:+258820061863',
       color: 'bg-blue-500',
     },
     {
       icon: <FaWhatsapp size={28} />,
       title: 'WhatsApp',
-      content: '+258 84 000 0000',
-      link: 'https://wa.me/258840000000',
+      content: '+258 84 133 9593',
+      link: 'https://wa.me/258841339593',
       color: 'bg-accent',
     },
     {
       icon: <FiMail size={28} />,
       title: 'Email',
-      content: 'info@ijps.co.mz',
-      link: 'mailto:info@ijps.co.mz',
+      content: 'anilton.jm13@gmail.com',
+      link: 'mailto:anilton.jm13@gmail.com',
       color: 'bg-red-500',
     },
     {
       icon: <FiMapPin size={28} />,
       title: 'Endereço',
       content: 'Av. Julius Nyerere, Maputo',
-      link: 'https://maps.google.com',
+      link: 'https://www.google.com/maps/search/Av+Julius+Nyerere/@-25.9653,32.5892,17z',
       color: 'bg-primary',
     },
   ];
@@ -113,7 +113,7 @@ export default function ContactoPage() {
       {/* SEO */}
       <DynamicSEO
         title="Contacto"
-        description="Entre em contacto com a IJPS. Estamos em Maputo, Moçambique. Telefone: +258 84 000 0000 | Email: info@ijps.co.mz | WhatsApp disponível."
+        description="Entre em contacto com a IJPS. Estamos em Maputo, Moçambique. Telefone: +258 82 006 1863 / +258 84 133 9593 | Email: anilton.jm13@gmail.com | WhatsApp disponível."
         keywords={['contacto IJPS', 'imobiliária Maputo contacto', 'telefone IJPS', 'email IJPS', 'WhatsApp imobiliária', 'endereço IJPS Maputo']}
         canonical="https://ijps.co.mz/contacto"
       />
@@ -333,7 +333,7 @@ export default function ContactoPage() {
                       <FaLinkedin size={20} />
                     </a>
                     <a
-                      href="https://wa.me/258840000000"
+                      href="https://wa.me/258841339593"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center hover:bg-accent-600 transition"
@@ -356,12 +356,17 @@ export default function ContactoPage() {
               <h2 className="text-2xl font-bold text-secondary mb-4">
                 Nossa Localização
               </h2>
-              <div className="h-96 bg-gray-200 rounded-lg flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <FiMapPin size={48} className="mx-auto mb-4" />
-                  <p>Mapa do Google será integrado aqui</p>
-                  <p className="text-sm mt-2">Av. Julius Nyerere, Maputo, Moçambique</p>
-                </div>
+              <div className="h-96 rounded-lg overflow-hidden">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3584.3547891234567!2d32.58717!3d-25.96533!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDU3JzU1LjIiUyAzMsKwMzUnMTcuNCJF!5e0!3m2!1spt-PT!2smz!4v1234567890123!5m2!1spt-PT!2smz"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Localização IJPS - Av. Julius Nyerere, Maputo"
+                ></iframe>
               </div>
             </div>
           </Card>
@@ -378,7 +383,7 @@ export default function ContactoPage() {
             Estamos disponíveis 24/7 via WhatsApp para emergências
           </p>
           <a
-            href="https://wa.me/258840000000"
+            href="https://wa.me/258841339593"
             target="_blank"
             rel="noopener noreferrer"
           >

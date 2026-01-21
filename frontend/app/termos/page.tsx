@@ -82,13 +82,6 @@ export default function TermosPage() {
               vendida, arrendada ou removida do mercado sem aviso prévio. A IJPS não se 
               responsabiliza por propriedades que não estejam mais disponíveis.
             </p>
-
-            <h3 className="text-xl font-semibold text-secondary-light mb-3">3.3 Preços</h3>
-            <p className="text-gray-700 mb-4">
-              Todos os preços listados estão em Meticais Moçambicanos (MZN) e podem estar sujeitos 
-              a alterações sem aviso prévio. Os preços finais serão confirmados durante o processo 
-              de negociação.
-            </p>
           </section>
 
           <section className="mb-8">
@@ -280,9 +273,9 @@ export default function TermosPage() {
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mt-4">
               <p className="font-semibold text-secondary mb-2">IJPS - Imobiliária Jamal & Prestação de Serviços</p>
               <p className="text-gray-700 mb-1">📍 Av. Julius Nyerere, Maputo, Moçambique</p>
-              <p className="text-gray-700 mb-1">📧 Email: info@ijps.co.mz</p>
-              <p className="text-gray-700 mb-1">📱 Telefone: +258 84 000 0000</p>
-              <p className="text-gray-700">💬 WhatsApp: +258 84 000 0000</p>
+              <p className="text-gray-700 mb-1">📧 Email: anilton.jm13@gmail.com</p>
+              <p className="text-gray-700 mb-1">📱 Telefone: +258 82 006 1863 / +258 84 133 9593</p>
+              <p className="text-gray-700">💬 WhatsApp: +258 84 133 9593</p>
             </div>
           </section>
 

@@ -30,9 +30,9 @@ const Navbar = () => {
                 <FiPhone size={14} />
                 +258 84 000 0000
               </a>
-              <a href="mailto:info@ijps.co.mz" className="flex items-center gap-2 hover:text-primary-200 transition">
-                <FiMail size={14} />
-                info@ijps.co.mz
+              <a href="mailto:anilton.jm13@gmail.com" className="flex items-center gap-2 hover:text-primary-200 transition">
+                <FiMail size={16} />
+                anilton.jm13@gmail.com
               </a>
             </div>
             <div className="flex gap-4">

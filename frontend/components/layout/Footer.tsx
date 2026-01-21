@@ -46,7 +46,7 @@ const Footer = () => {
                 <FiLinkedin size={24} />
               </a>
               <a 
-                href="https://wa.me/258840000000" 
+                href="https://wa.me/258841339593" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-300 hover:text-accent-400 transition"
@@ -124,14 +124,19 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <FiPhone size={20} className="text-primary flex-shrink-0" />
-                <a href="tel:+258840000000" className="text-gray-300 hover:text-primary transition">
-                  +258 84 000 0000
-                </a>
+                <div className="text-gray-300">
+                  <a href="tel:+258820061863" className="hover:text-primary transition block">
+                    +258 82 006 1863
+                  </a>
+                  <a href="tel:+258841339593" className="hover:text-primary transition block">
+                    +258 84 133 9593
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-3">
                 <FiMail size={20} className="text-primary flex-shrink-0" />
-                <a href="mailto:info@ijps.co.mz" className="text-gray-300 hover:text-primary transition">
-                  info@ijps.co.mz
+                <a href="mailto:anilton.jm13@gmail.com" className="text-gray-300 hover:text-primary transition">
+                  anilton.jm13@gmail.com
                 </a>
               </li>
             </ul>
