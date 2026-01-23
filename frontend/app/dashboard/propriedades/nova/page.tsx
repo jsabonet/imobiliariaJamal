@@ -14,7 +14,10 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 export default function NovaPropriedadePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState('');
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [agents, setAgents] = useState<any[]>([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
@@ -154,7 +157,42 @@ export default function NovaPropriedadePage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newImages = Array.from(e.target.files);
-      setImages(prevImages => [...prevImages, ...newImages]);
+      const errors: string[] = [];
+      const validImages: File[] = [];
+      
+      // Validar cada imagem
+      newImages.forEach((file, index) => {
+        // Verificar tipo
+        if (!file.type.startsWith('image/')) {
+          errors.push(`Arquivo "${file.name}" não é uma imagem válida`);
+          return;
+        }
+        
+        // Verificar tamanho (máximo 10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+          errors.push(`Imagem "${file.name}" excede o tamanho máximo de 10MB`);
+          return;
+        }
+        
+        validImages.push(file);
+      });
+      
+      // Verificar limite total de imagens (máximo 20)
+      if (images.length + validImages.length > 20) {
+        errors.push(`Máximo de 20 imagens permitido. Você já tem ${images.length} imagens`);
+        setValidationErrors(errors);
+        return;
+      }
+      
+      if (errors.length > 0) {
+        setValidationErrors(errors);
+        setTimeout(() => setValidationErrors([]), 5000);
+      }
+      
+      if (validImages.length > 0) {
+        setImages(prevImages => [...prevImages, ...validImages]);
+      }
     }
   };
 
@@ -179,11 +217,53 @@ export default function NovaPropriedadePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError('');
+    setValidationErrors([]);
+    
+    // Validar campos obrigatórios
+    const errors: string[] = [];
+    
+    if (!formData.title || formData.title.trim() === '') {
+      errors.push('Título é obrigatório');
+    }
+    if (!formData.type || formData.type === '') {
+      errors.push('Tipo de imóvel é obrigatório');
+    }
+    if (!formData.status || formData.status === '') {
+      errors.push('Status é obrigatório');
+    }
+    if (!formData.address || formData.address.trim() === '') {
+      errors.push('Endereço é obrigatório');
+    }
+    if (!formData.city || formData.city.trim() === '') {
+      errors.push('Cidade é obrigatória');
+    }
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      errors.push('Preço é obrigatório e deve ser maior que zero');
+    }
+    if (!formData.area || parseFloat(String(formData.area)) <= 0) {
+      errors.push('Área é obrigatória e deve ser maior que zero');
+    }
+    if (images.length === 0) {
+      errors.push('Adicione pelo menos 1 imagem da propriedade');
+    }
+    
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      setError('Por favor, corrija os erros abaixo antes de salvar');
+      // Scroll para o topo para ver os erros
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    
+    setLoading(true);
+    setUploadProgress(0);
 
     try {
       // Criar FormData para enviar arquivos
+      setUploadStatus('Preparando dados...');
+      setUploadProgress(10);
+      
       const formDataToSend = new FormData();
       
       // Adicionar campos de texto (evitar enviar amenities aqui)
@@ -197,13 +277,18 @@ export default function NovaPropriedadePage() {
         }
       });
       
+      setUploadProgress(20);
+      
       // Adicionar location (fallback)
       formDataToSend.set('location', formData.neighborhood || formData.address || '');
       
       // Adicionar amenities como JSON válido
       formDataToSend.set('amenities', JSON.stringify(selectedAmenities));
       
+      setUploadProgress(30);
+      
       // Adicionar imagens
+      setUploadStatus(`Processando ${images.length} imagem(ns)...`);
       images.forEach((image, index) => {
         formDataToSend.append('images', image);
         // Marcar qual é a imagem principal
@@ -212,10 +297,18 @@ export default function NovaPropriedadePage() {
         }
       });
       
+      setUploadProgress(50);
+      
       // Adicionar documentos
-      documents.forEach(doc => {
-        formDataToSend.append('documents', doc);
-      });
+      if (documents.length > 0) {
+        setUploadStatus(`Adicionando ${documents.length} documento(s)...`);
+        documents.forEach(doc => {
+          formDataToSend.append('documents', doc);
+        });
+      }
+      
+      setUploadProgress(60);
+      setUploadStatus('Enviando para o servidor...');
       
       // Enviar para API
       const response = await fetch(`${API_URL}/properties/`, {
@@ -224,15 +317,38 @@ export default function NovaPropriedadePage() {
         // NÃO definir Content-Type - o browser faz isso automaticamente com boundary correto
       });
       
+      setUploadProgress(90);
+      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || errorData.message || 'Erro ao criar propriedade');
+        const errorMessage = errorData.detail || errorData.message || 'Erro ao criar propriedade';
+        
+        // Tratar erros específicos
+        if (response.status === 400) {
+          throw new Error(`Dados inválidos: ${errorMessage}`);
+        } else if (response.status === 413) {
+          throw new Error('Arquivos muito grandes. Reduza o tamanho das imagens e tente novamente');
+        } else if (response.status === 500) {
+          throw new Error('Erro no servidor. Tente novamente em alguns minutos');
+        }
+        
+        throw new Error(errorMessage);
       }
       
-      router.push('/dashboard/propriedades');
+      setUploadProgress(100);
+      setUploadStatus('Propriedade salva com sucesso!');
+      
+      // Pequeno delay para mostrar o sucesso
+      setTimeout(() => {
+        router.push('/dashboard/propriedades');
+      }, 500);
     } catch (err: any) {
       setError(err.message || 'Erro ao criar propriedade');
       console.error('Erro:', err);
+      setUploadProgress(0);
+      setUploadStatus('');
+      // Scroll para o topo para ver o erro
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
     }
@@ -251,13 +367,54 @@ export default function NovaPropriedadePage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Alertas de Erro */}
           {error && (
             <div className="animate-shake p-4 md:p-5 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-md">
               <div className="flex items-start gap-3">
                 <span className="text-2xl">⚠️</span>
-                <div>
-                  <p className="font-semibold text-red-800 text-sm md:text-base mb-1">Erro ao salvar</p>
+                <div className="flex-1">
+                  <p className="font-semibold text-red-800 text-sm md:text-base mb-1">Erro ao salvar propriedade</p>
                   <p className="text-red-600 text-sm">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Erros de Validação */}
+          {validationErrors.length > 0 && (
+            <div className="animate-shake p-4 md:p-5 bg-orange-50 border-l-4 border-orange-500 rounded-lg shadow-md">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">📋</span>
+                <div className="flex-1">
+                  <p className="font-semibold text-orange-800 text-sm md:text-base mb-2">Campos obrigatórios não preenchidos:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    {validationErrors.map((err, index) => (
+                      <li key={index} className="text-orange-700 text-sm">{err}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Progress Bar de Upload */}
+          {loading && (
+            <div className="p-4 md:p-5 bg-blue-50 border-l-4 border-blue-500 rounded-lg shadow-md">
+              <div className="flex items-start gap-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                <div className="flex-1">
+                  <p className="font-semibold text-blue-800 text-sm md:text-base mb-2">Salvando propriedade...</p>
+                  <p className="text-blue-600 text-sm mb-2">{uploadStatus}</p>
+                  <div className="w-full bg-blue-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-blue-600 mt-1">{uploadProgress}% completo</p>
+                  {images.length > 5 && (
+                    <p className="text-xs text-blue-500 mt-2">⏱️ Processando {images.length} imagens... Isso pode levar alguns segundos.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -876,14 +1033,19 @@ export default function NovaPropriedadePage() {
             
             {expandedSections.media && (
               <div className="p-4 md:p-6 border-t border-gray-100 animate-fadeIn space-y-4">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-2">
                   <p className="text-sm text-yellow-800">
                     <strong>📸 Dica:</strong> A primeira imagem (marcada como principal) será exibida nos cards de listagem. As demais aparecem na página de detalhes.
+                  </p>
+                  <p className="text-xs text-yellow-700">
+                    • Máximo: 20 imagens por propriedade<br/>
+                    • Tamanho máximo: 10MB por imagem<br/>
+                    • Formatos aceitos: JPG, PNG, WEBP, GIF
                   </p>
                 </div>
 
                 <label className="block text-sm font-medium text-secondary-700 mb-2">
-                  Adicionar Imagens
+                  Adicionar Imagens *
                 </label>
                 <input
                   type="file"
