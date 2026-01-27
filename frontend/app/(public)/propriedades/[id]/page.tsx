@@ -894,32 +894,32 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           
           {/* Propriedades Recomendadas */}
           {recommendedProperties.length > 0 && (
-            <div className="mt-12">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-secondary">
+            <div className="mt-8 sm:mt-12">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-6">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-secondary">
                   Propriedades Similares
                 </h2>
                 <Link 
                   href="/propriedades" 
-                  className="text-primary hover:text-primary-dark flex items-center gap-2 font-medium"
+                  className="text-primary hover:text-primary-dark flex items-center gap-2 font-medium text-sm sm:text-base"
                 >
                   Ver Todas
-                  <FiArrowRight />
+                  <FiArrowRight className="text-lg" />
                 </Link>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
                 {recommendedProperties.map((recommendedProp) => (
                   <PropertyCard key={recommendedProp.id} property={recommendedProp} />
                 ))}
               </div>
               
-              <div className="mt-8 text-center">
-                <p className="text-sm text-gray-600 mb-4">
+              <div className="mt-6 sm:mt-8 text-center px-4">
+                <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                   Não encontrou o que procura? Temos mais opções para você!
                 </p>
                 <Link href="/propriedades">
-                  <Button variant="outline">
+                  <Button variant="outline" className="w-full sm:w-auto">
                     Explorar Todas as Propriedades
                   </Button>
                 </Link>
