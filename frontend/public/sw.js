@@ -132,3 +132,92 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+// Push notification event handler
+self.addEventListener('push', (event) => {
+  console.log('[Service Worker] Push received:', event);
+  
+  let notificationData = {
+    title: 'Nova Notificação',
+    body: 'Você tem uma nova atualização!',
+    icon: '/icon-192x192.png',
+    badge: '/icon-72x72.png',
+    url: '/'
+  };
+  
+  // Parse notification data
+  if (event.data) {
+    try {
+      notificationData = event.data.json();
+    } catch (e) {
+      console.error('[Service Worker] Error parsing push data:', e);
+    }
+  }
+  
+  const { title, body, icon, badge, url } = notificationData;
+  
+  const options = {
+    body: body,
+    icon: icon || '/icon-192x192.png',
+    badge: badge || '/icon-72x72.png',
+    vibrate: [200, 100, 200],
+    tag: 'notification-' + Date.now(),
+    requireInteraction: false,
+    data: {
+      url: url || '/',
+      dateOfArrival: Date.now()
+    },
+    actions: [
+      {
+        action: 'view',
+        title: 'Ver Agora',
+        icon: '/icon-72x72.png'
+      },
+      {
+        action: 'close',
+        title: 'Fechar',
+        icon: '/icon-72x72.png'
+      }
+    ]
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
+// Notification click event handler
+self.addEventListener('notificationclick', (event) => {
+  console.log('[Service Worker] Notification clicked:', event);
+  
+  event.notification.close();
+  
+  if (event.action === 'close') {
+    return;
+  }
+  
+  // Get the URL from notification data
+  const urlToOpen = event.notification.data?.url || '/';
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // Check if there's already a window open with this URL
+        for (const client of clientList) {
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        
+        // If not, open a new window
+        if (clients.openWindow) {
+          return clients.openWindow(urlToOpen);
+        }
+      })
+  );
+});
+
+// Notification close event handler
+self.addEventListener('notificationclose', (event) => {
+  console.log('[Service Worker] Notification closed:', event);
+});

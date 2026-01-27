@@ -242,3 +242,22 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"Contacto - {self.name}"
+
+
+class PushSubscription(models.Model):
+    """Modelo para armazenar subscriptions de notificações push"""
+    endpoint = models.TextField(unique=True, verbose_name="Endpoint")
+    p256dh = models.CharField(max_length=255, verbose_name="Chave P256DH")
+    auth = models.CharField(max_length=255, verbose_name="Chave Auth")
+    user_agent = models.TextField(blank=True, null=True, verbose_name="User Agent")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Atualizado em")
+    is_active = models.BooleanField(default=True, verbose_name="Ativo")
+
+    class Meta:
+        verbose_name = "Push Subscription"
+        verbose_name_plural = "Push Subscriptions"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Subscription {self.id} - {self.created_at.strftime('%d/%m/%Y')}"

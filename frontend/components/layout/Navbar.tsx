@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FiMenu, FiX, FiPhone, FiMail, FiHeart } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import Button from '@/components/ui/Button';
+import NotificationButton from '@/components/NotificationButton';
 import { useFavorites } from '@/lib/useFavorites';
 
 const Navbar = () => {
@@ -85,8 +86,9 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* CTA Button - Desktop */}
-          <div className="hidden md:block">
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-4">
+            <NotificationButton />
             <Link href="/avaliar">
               <Button>Avaliar Imóvel</Button>
             </Link>
@@ -132,6 +134,7 @@ const Navbar = () => {
                 )}
               </Link>
               <div className="pt-4 border-t flex flex-col gap-2">
+                <NotificationButton />
                 <Link href="/avaliar" onClick={() => setIsOpen(false)}>
                   <Button fullWidth>Avaliar Imóvel</Button>
                 </Link>

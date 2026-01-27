@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Agent, Property, PropertyImage, PropertyDocument, EvaluationRequest, ContactMessage
+from .models import Agent, Property, PropertyImage, PropertyDocument, EvaluationRequest, ContactMessage, PushSubscription
 
 admin.site.site_header = "Imobiliária Jamal Administração"
 admin.site.site_title = "Imobiliária Jamal"
@@ -35,3 +35,30 @@ class EvaluationAdmin(admin.ModelAdmin):
 class ContactMessageAdmin(admin.ModelAdmin):
     list_display = ('name', 'phone', 'property', 'created_at')
     search_fields = ('name', 'phone')
+
+
+@admin.register(PushSubscription)
+class PushSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'created_at', 'is_active', 'get_browser')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('endpoint', 'user_agent')
+    readonly_fields = ('endpoint', 'p256dh', 'auth', 'user_agent', 'created_at', 'updated_at')
+    
+    def get_browser(self, obj):
+        """Extrair nome do browser do user agent"""
+        if not obj.user_agent:
+            return "Desconhecido"
+        
+        ua = obj.user_agent.lower()
+        if 'chrome' in ua:
+            return 'Chrome'
+        elif 'firefox' in ua:
+            return 'Firefox'
+        elif 'safari' in ua:
+            return 'Safari'
+        elif 'edge' in ua:
+            return 'Edge'
+        else:
+            return 'Outro'
+    
+    get_browser.short_description = 'Navegador'

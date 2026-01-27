@@ -2,7 +2,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     PropertyViewSet, PropertyImageViewSet, PropertyDocumentViewSet,
-    AgentViewSet, EvaluationRequestViewSet, ContactMessageViewSet
+    AgentViewSet, EvaluationRequestViewSet, ContactMessageViewSet,
+    subscribe_push, unsubscribe_push
 )
 from .auth_views import admin_auth
 from .agents_views import agents_list, agent_detail, agent_reset_password
@@ -21,4 +22,6 @@ urlpatterns = [
     path('admin/agents/', agents_list, name='agents-list'),
     path('admin/agents/<int:agent_id>/', agent_detail, name='agent-detail'),
     path('admin/agents/<int:agent_id>/reset-password/', agent_reset_password, name='agent-reset-password'),
+    path('notifications/subscribe/', subscribe_push, name='subscribe-push'),
+    path('notifications/unsubscribe/', unsubscribe_push, name='unsubscribe-push'),
 ]

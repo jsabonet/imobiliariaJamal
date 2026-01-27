@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Property, PropertyImage, PropertyDocument, Agent, EvaluationRequest, ContactMessage
+from .models import Property, PropertyImage, PropertyDocument, Agent, EvaluationRequest, ContactMessage, PushSubscription
 
 class AgentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,3 +55,10 @@ class ContactMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactMessage
         fields = ['id', 'name', 'email', 'phone', 'message', 'property', 'created_at']
+
+
+class PushSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PushSubscription
+        fields = ['id', 'endpoint', 'p256dh', 'auth', 'user_agent', 'created_at', 'is_active']
+        read_only_fields = ['id', 'created_at']

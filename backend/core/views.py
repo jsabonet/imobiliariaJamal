@@ -1,13 +1,13 @@
 from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from .models import Property, PropertyImage, PropertyDocument, Agent, EvaluationRequest, ContactMessage
+from .models import Property, PropertyImage, PropertyDocument, Agent, EvaluationRequest, ContactMessage, PushSubscription
 from .serializers import (
     PropertySerializer, AgentSerializer,
-    EvaluationRequestSerializer, ContactMessageSerializer
+    EvaluationRequestSerializer, ContactMessageSerializer, PushSubscriptionSerializer
 )
 
 class PropertyViewSet(viewsets.ModelViewSet):
@@ -176,3 +176,83 @@ class ContactMessageViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         return super().get_permissions()
+
+
+@api_view(['POST'])
+def subscribe_push(request):
+    """
+    Endpoint para registrar uma nova push subscription
+    """
+    try:
+        # Extrair user agent do request
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        
+        # Adicionar user agent aos dados
+        data = request.data.copy()
+        data['user_agent'] = user_agent
+        
+        serializer = PushSubscriptionSerializer(data=data)
+        if serializer.is_valid():
+            # Verificar se já existe subscription com este endpoint
+            endpoint = serializer.validated_data['endpoint']
+            subscription, created = PushSubscription.objects.update_or_create(
+                endpoint=endpoint,
+                defaults={
+                    'p256dh': serializer.validated_data['p256dh'],
+                    'auth': serializer.validated_data['auth'],
+                    'user_agent': user_agent,
+                    'is_active': True
+                }
+            )
+            
+            return Response({
+                'success': True,
+                'message': 'Notificações ativadas com sucesso!' if created else 'Subscription atualizada!',
+                'subscription_id': subscription.id
+            }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        
+        return Response({
+            'success': False,
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+def unsubscribe_push(request):
+    """
+    Endpoint para remover uma push subscription
+    """
+    try:
+        endpoint = request.data.get('endpoint')
+        
+        if not endpoint:
+            return Response({
+                'success': False,
+                'message': 'Endpoint é obrigatório'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Marcar como inativa ao invés de deletar
+        deleted_count = PushSubscription.objects.filter(endpoint=endpoint).update(is_active=False)
+        
+        if deleted_count > 0:
+            return Response({
+                'success': True,
+                'message': 'Notificações desativadas com sucesso!'
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'success': False,
+                'message': 'Subscription não encontrada'
+            }, status=status.HTTP_404_NOT_FOUND)
+            
+    except Exception as e:
+        return Response({
+            'success': False,
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
