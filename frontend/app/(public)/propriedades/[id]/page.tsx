@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiMaximize2, FiMapPin, FiPhone, FiMail, FiShare2, FiHeart, FiCheckCircle } from 'react-icons/fi';
+import { FiMaximize2, FiMapPin, FiPhone, FiMail, FiShare2, FiHeart, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
 import { IoBed, IoWater } from 'react-icons/io5';
 import { FaWhatsapp, FaCheckCircle } from 'react-icons/fa';
 import Button from '@/components/ui/Button';
@@ -11,10 +11,11 @@ import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
 import MapPlaceholder from '@/components/ui/MapPlaceholder';
+import PropertyCard from '@/components/properties/PropertyCard';
 import PropertySchema from '@/components/seo/PropertySchema';
 import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import DynamicSEO from '@/components/seo/DynamicSEO';
-import { fetchPropertyById, submitContact } from '@/lib/api';
+import { fetchPropertyById, submitContact, fetchProperties } from '@/lib/api';
 import { useFavorites } from '@/lib/useFavorites';
 
 export default function PropertyDetailPage({ params }: { params: { id: string } }) {
@@ -23,6 +24,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [property, setProperty] = useState<any | null>(null);
+  const [recommendedProperties, setRecommendedProperties] = useState<any[]>([]);
+  const [loadingRecommended, setLoadingRecommended] = useState(false);
   
   // Contact form state
   const [contactForm, setContactForm] = useState({
@@ -114,6 +117,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
         if (isMounted) {
           setProperty(mapped);
+          // Buscar propriedades recomendadas após carregar a propriedade atual
+          loadRecommendedProperties(mapped);
         }
       } catch (e: any) {
         if (isMounted) setError(e.message || 'Falha ao carregar propriedade');
@@ -124,6 +129,104 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     load();
     return () => { isMounted = false; };
   }, [params.id, API_BASE]);
+
+  // Buscar propriedades recomendadas com base na propriedade atual
+  async function loadRecommendedProperties(currentProperty: any) {
+    try {
+      setLoadingRecommended(true);
+      
+      // Estratégia inteligente de recomendação:
+      // 1. Mesma localização (cidade) e tipo
+      // 2. Faixa de preço similar (±30%)
+      // 3. Mesmo status (venda/arrendamento)
+      // 4. Excluir a propriedade atual
+      
+      const priceMin = currentProperty.price * 0.7;
+      const priceMax = currentProperty.price * 1.3;
+      
+      const params: Record<string, string> = {
+        status: currentProperty.status,
+        page_size: '4',
+        ordering: '-is_featured,-created_at'
+      };
+      
+      // Prioridade 1: mesma cidade e tipo
+      if (currentProperty.city) {
+        params.location = currentProperty.city;
+      }
+      if (currentProperty.type) {
+        params.type = currentProperty.type;
+      }
+      
+      let data = await fetchProperties(params);
+      let results = (data.results || []).filter((p: any) => p.id !== currentProperty.id);
+      
+      // Se não encontrar suficientes (menos de 3), buscar só por cidade
+      if (results.length < 3 && currentProperty.city) {
+        const params2 = {
+          location: currentProperty.city,
+          status: currentProperty.status,
+          page_size: '4',
+          ordering: '-is_featured,-created_at'
+        };
+        data = await fetchProperties(params2);
+        results = (data.results || []).filter((p: any) => p.id !== currentProperty.id);
+      }
+      
+      // Se ainda não tiver suficientes, buscar só por tipo e status
+      if (results.length < 3 && currentProperty.type) {
+        const params3 = {
+          type: currentProperty.type,
+          status: currentProperty.status,
+          page_size: '4',
+          ordering: '-is_featured,-created_at'
+        };
+        data = await fetchProperties(params3);
+        results = (data.results || []).filter((p: any) => p.id !== currentProperty.id);
+      }
+      
+      // Se ainda não tiver suficientes, buscar apenas por status
+      if (results.length < 3) {
+        const params4 = {
+          status: currentProperty.status,
+          page_size: '4',
+          ordering: '-is_featured,-created_at'
+        };
+        data = await fetchProperties(params4);
+        results = (data.results || []).filter((p: any) => p.id !== currentProperty.id);
+      }
+      
+      // Mapear para o formato esperado pelo PropertyCard
+      const mapped = results.slice(0, 3).map((p: any) => {
+        const images = Array.isArray(p.images) ? p.images : [];
+        const primary = images.find((img: any) => img.is_primary) || images[0];
+        const imageUrl: string = primary?.image
+          ? ((String(primary.image).startsWith('http') ? String(primary.image) : `${API_BASE}${primary.image}`))
+          : 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=800&fit=crop';
+        
+        return {
+          id: p.id,
+          title: p.title,
+          location: p.location || [p.neighborhood, p.city].filter(Boolean).join(', '),
+          price: Number(p.price || 0),
+          type: p.type || 'Propriedade',
+          bedrooms: p.bedrooms || 0,
+          bathrooms: p.bathrooms || 0,
+          area: p.area || p.useful_area || 0,
+          image: imageUrl,
+          verified: !!p.is_verified,
+          featured: !!p.is_featured,
+          currency: p.currency || 'MZN',
+        };
+      });
+      
+      setRecommendedProperties(mapped);
+    } catch (e) {
+      console.error('Erro ao carregar propriedades recomendadas:', e);
+    } finally {
+      setLoadingRecommended(false);
+    }
+  }
 
   function formatPrice(price: number): string {
     const currencyCode = property?.currency || 'MZN';
@@ -788,6 +891,41 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               </Card>
             </div>
           </div>
+          
+          {/* Propriedades Recomendadas */}
+          {recommendedProperties.length > 0 && (
+            <div className="mt-12">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-secondary">
+                  Propriedades Similares
+                </h2>
+                <Link 
+                  href="/propriedades" 
+                  className="text-primary hover:text-primary-dark flex items-center gap-2 font-medium"
+                >
+                  Ver Todas
+                  <FiArrowRight />
+                </Link>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recommendedProperties.map((recommendedProp) => (
+                  <PropertyCard key={recommendedProp.id} property={recommendedProp} />
+                ))}
+              </div>
+              
+              <div className="mt-8 text-center">
+                <p className="text-sm text-gray-600 mb-4">
+                  Não encontrou o que procura? Temos mais opções para você!
+                </p>
+                <Link href="/propriedades">
+                  <Button variant="outline">
+                    Explorar Todas as Propriedades
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
