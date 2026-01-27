@@ -252,7 +252,7 @@ export default function PropriedadesPage() {
             Propriedades Disponíveis
           </h1>
           <p className="text-lg text-gray-200">
-            {loading ? 'A carregar…' : `${properties.length} propriedades encontradas`}
+            {loading ? 'A carregar…' : `${results?.count || 0} propriedades encontradas`}
           </p>
         </div>
       </div>
