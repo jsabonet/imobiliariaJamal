@@ -47,8 +47,12 @@ export default function PropriedadesPage() {
       const urlLocation = searchParams.get('location') || 'all';
       const urlPriceRange = searchParams.get('priceRange') || 'all';
       const urlStatus = searchParams.get('status') || 'all';
+      const urlPage = parseInt(searchParams.get('page') || '1', 10);
+      const urlPerPage = parseInt(searchParams.get('per_page') || '12', 10);
       
       setSearchInput(urlSearch);
+      setCurrentPage(urlPage);
+      setItemsPerPage(urlPerPage);
       setFilters({
         search: urlSearch,
         type: urlType,
@@ -105,6 +109,10 @@ export default function PropriedadesPage() {
         else if (filters.ordering === 'area') params.ordering = '-area';
         else params.ordering = '-created_at';
         
+        // Add pagination params
+        params.page = currentPage.toString();
+        params.page_size = itemsPerPage.toString();
+        
         // Buscar dados sempre frescos (sem cache)
         const data = await fetchProperties(params);
         
@@ -119,7 +127,7 @@ export default function PropriedadesPage() {
     }
     load();
     return () => { mounted = false; };
-  }, [filters, filtersInitialized]);
+  }, [filters, filtersInitialized, currentPage, itemsPerPage]);
 
   const propertyTypes = [
     { value: 'all', label: 'Todos os Tipos' },
