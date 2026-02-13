@@ -175,6 +175,33 @@ class PropertyImage(models.Model):
         verbose_name_plural = "Imagens das Propriedades"
         ordering = ['-is_primary', 'order', 'id']
 
+    def save(self, *args, **kwargs):
+        """Sobrescreve save para aplicar marca d'água automaticamente"""
+        from .watermark_utils import add_watermark_with_property_code
+        
+        # Se está salvando uma nova imagem (não atualização de campos)
+        if self.image and hasattr(self.image, 'file'):
+            try:
+                # Obter código de referência da propriedade se disponível
+                property_code = None
+                if self.property and hasattr(self.property, 'reference_code'):
+                    property_code = self.property.reference_code
+                
+                # Aplicar marca d'água
+                watermarked_image = add_watermark_with_property_code(
+                    self.image.file,
+                    property_code=property_code
+                )
+                
+                # Substituir imagem original pela com marca d'água
+                self.image.file = watermarked_image
+                
+            except Exception as e:
+                # Em caso de erro, continuar sem marca d'água e registrar erro
+                print(f"Aviso: Não foi possível aplicar marca d'água: {e}")
+        
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Imagem {self.order} - {self.property.title}"
 
