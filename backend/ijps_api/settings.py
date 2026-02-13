@@ -147,3 +147,7 @@ REST_FRAMEWORK = {
 # CORS Settings
 CORS_ALLOWED_ORIGINS = os.getenv('DJANGO_CORS_ORIGINS', 'http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001').split(',')
 CORS_ALLOW_CREDENTIALS = True
+
+# Push Notifications - VAPID Keys
+VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', 'MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgEXtlC2FeYcJhKQ7z7xk4riwshMVi5d3dxA34RW4pSRKhRANCAATbWmjTEalkmcFOhgo5IEh1v4BspP9BlWphvF0JR6Ltf4S0qHONBmI1b6X9Exb3V5X6d6uQ1wfrt4gdZoFYlWIi')
+VAPID_CLAIMS_EMAIL = os.getenv('VAPID_CLAIMS_EMAIL', 'mailto:contato@imobiliariajamal.com')

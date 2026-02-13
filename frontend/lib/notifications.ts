@@ -83,7 +83,7 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
 
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource
       });
 
       console.log('Nova push subscription criada:', subscription);
@@ -225,7 +225,6 @@ export async function showTestNotification(): Promise<void> {
     body: 'As notificações estão funcionando! Você receberá alertas quando novas propriedades forem publicadas.',
     icon: '/icon-192x192.png',
     badge: '/icon-72x72.png',
-    vibrate: [200, 100, 200],
     tag: 'test-notification',
     data: {
       url: '/',

@@ -129,7 +129,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
       <Card hover className="group overflow-hidden">
         <Link href={`/propriedades/${property.id}`}>
           {/* Image Container */}
-          <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-200">
+          <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-200 property-image-protected">
             {/* Skeleton loader */}
             {!imageLoaded && (
               <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
@@ -142,12 +142,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             src={property.image}
             alt={property.title}
             fill
-            className={`object-cover group-hover:scale-110 transition-transform duration-500 ${
+            className={`object-cover group-hover:scale-110 transition-transform duration-500 protected no-context-menu ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             onLoad={() => setImageLoaded(true)}
             loading="lazy"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            onContextMenu={(e) => e.preventDefault()}
+            draggable={false}
           />
           
           {/* Badges Overlay */}
