@@ -80,8 +80,20 @@ def send_push_notification(subscription, title, body, url=None, icon=None):
             "aud": subscription.endpoint.split('/')[0] + '//' + subscription.endpoint.split('/')[2]  # https://fcm.googleapis.com
         }
         
+        logger.debug(f"Vapid object type: {type(vapid)}")
+        logger.debug(f"Vapid private_key type: {type(vapid.private_key)}")
+        logger.debug(f"Vapid claims: {vapid_claims}")
+        
         # Gerar cabeçalhos VAPID manualmente usando sign()
-        vapid_headers = vapid.sign(vapid_claims)
+        try:
+            vapid_headers = vapid.sign(vapid_claims)
+            logger.debug(f "Vapid headers generated: {vapid_headers}")
+        except Exception as e:
+            logger.error(f"Erro ao gerar headers VAPID: {e}")
+            logger.error(f"Tipo error: {type(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            raise
         
         # Enviar notificação com headers gerados manualmente (sem passar vapid_private_key)
         webpush(
