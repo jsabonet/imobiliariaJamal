@@ -269,7 +269,7 @@ async function sendSubscriptionToBackend(subscription: PushSubscription): Promis
       auth: subscriptionJSON.keys?.auth?.substring(0, 20) + '...'
     });
 
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/subscribe/`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/notifications/subscribe/`;
     console.log(`📤 [Backend] URL: ${apiUrl}`);
     console.log('📤 [Backend] Enviando requisição POST...');
     
@@ -309,7 +309,7 @@ async function removeSubscriptionFromBackend(subscription: PushSubscription): Pr
   
   try {
     const subscriptionJSON = subscription.toJSON();
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/unsubscribe/`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/notifications/unsubscribe/`;
     
     console.log(`📤 [Backend] URL: ${apiUrl}`);
     console.log('📤 [Backend] Endpoint:', subscriptionJSON.endpoint?.substring(0, 50) + '...');
