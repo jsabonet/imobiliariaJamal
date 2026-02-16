@@ -4,12 +4,37 @@ import { useEffect } from 'react';
 
 export default function PWARegister() {
   useEffect(() => {
+    console.log('[PWARegister] Component mounted');
+    console.log('[PWARegister] Service Worker supported:', 'serviceWorker' in navigator);
+    
     if ('serviceWorker' in navigator) {
+      // Primeiro, verificar se já existe um SW registrado
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        console.log('[PWARegister] Service Workers existentes:', registrations.length);
+        registrations.forEach((reg, index) => {
+          console.log(`   [${index}] Scope: ${reg.scope}, Active: ${reg.active?.state}`);
+        });
+      });
+      
       window.addEventListener('load', () => {
+        console.log('[PWARegister] Evento load disparado, iniciando registro do SW...');
         navigator.serviceWorker
           .register('/sw.js')
           .then((registration) => {
-            console.log('✅ Service Worker registrado com sucesso:', registration.scope);
+            console.log('✅ [PWARegister] Service Worker registrado com sucesso!');
+            console.log('   - Scope:', registration.scope);
+            console.log('   - Estado:', registration.active?.state);
+            console.log('   - Installing:', registration.installing?.state);
+            console.log('   - Waiting:', registration.waiting?.state);
+            
+            // Monitor state changes
+            if (registration.installing) {
+              const sw = registration.installing;
+              console.log('[PWARegister] SW está instalando...');
+              sw.addEventListener('statechange', () => {
+                console.log('[PWARegister] SW state changed to:', sw.state);
+              });
+            }
             
             // Check for updates
             registration.addEventListener('updatefound', () => {
@@ -28,7 +53,9 @@ export default function PWARegister() {
             });
           })
           .catch((error) => {
-            console.error('❌ Erro ao registrar Service Worker:', error);
+            console.error('❌ [PWARegister] ERRO ao registrar Service Worker:');
+            console.error('   - Mensagem:', error.message);
+            console.error('   - Stack:', error.stack);
           });
 
         // Handle service worker updates
