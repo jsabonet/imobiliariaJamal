@@ -388,14 +388,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       <div className="bg-black">
         <div className="container mx-auto px-4 py-4">
           {/* Main Image */}
-          <div className="relative h-[300px] md:h-[500px] rounded-xl overflow-hidden mb-4 property-image-detail">
+          <div className="relative h-[300px] md:h-[500px] rounded-xl overflow-hidden mb-4">
             <Image
               src={property.images[currentImageIndex] as string}
               alt={property.title}
               fill
-              className="object-cover protected no-context-menu"
-              onContextMenu={(e) => e.preventDefault()}
-              draggable={false}
+              className="object-cover"
               priority
             />
             
@@ -425,7 +423,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`relative h-20 md:h-24 w-32 md:w-36 flex-shrink-0 rounded-lg overflow-hidden property-image-protected ${
+                className={`relative h-20 md:h-24 w-32 md:w-36 flex-shrink-0 rounded-lg overflow-hidden ${
                   currentImageIndex === index ? 'ring-4 ring-primary' : ''
                 }`}
               >
@@ -433,9 +431,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   src={image}
                   alt={`${property.title} - ${index + 1}`}
                   fill
-                  className="object-cover protected no-context-menu"
-                  onContextMenu={(e) => e.preventDefault()}
-                  draggable={false}
+                  className="object-cover"
                 />
               </button>
             ))}
