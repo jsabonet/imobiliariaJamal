@@ -39,10 +39,51 @@ class ContactMessageAdmin(admin.ModelAdmin):
 
 @admin.register(PushSubscription)
 class PushSubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'created_at', 'is_active', 'get_browser')
-    list_filter = ('is_active', 'created_at')
+    list_display = (
+        'id', 'created_at', 'is_active', 'get_browser',
+        'notify_new_properties', 'notify_price_changes',
+        'quiet_hours_enabled'
+    )
+    list_filter = (
+        'is_active', 'created_at',
+        'notify_new_properties', 'notify_price_changes',
+        'notify_status_changes', 'notify_recommendations',
+        'quiet_hours_enabled'
+    )
     search_fields = ('endpoint', 'user_agent')
     readonly_fields = ('endpoint', 'p256dh', 'auth', 'user_agent', 'created_at', 'updated_at')
+    
+    fieldsets = (
+        ('Informações da Subscription', {
+            'fields': ('endpoint', 'p256dh', 'auth', 'user_agent', 'is_active', 'created_at', 'updated_at')
+        }),
+        ('Preferências de Notificação', {
+            'fields': (
+                'notify_new_properties',
+                'notify_price_changes',
+                'notify_status_changes',
+                'notify_recommendations'
+            )
+        }),
+        ('Filtros de Interesse', {
+            'fields': (
+                'location_filters',
+                'property_types',
+                'price_min',
+                'price_max',
+                'bedrooms_min'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Horário Silencioso', {
+            'fields': (
+                'quiet_hours_enabled',
+                'quiet_hours_start',
+                'quiet_hours_end'
+            ),
+            'classes': ('collapse',)
+        }),
+    )
     
     def get_browser(self, obj):
         """Extrair nome do browser do user agent"""

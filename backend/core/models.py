@@ -280,6 +280,24 @@ class PushSubscription(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Atualizado em")
     is_active = models.BooleanField(default=True, verbose_name="Ativo")
+    
+    # Preferências de notificação
+    notify_new_properties = models.BooleanField(default=True, verbose_name="Novas Propriedades")
+    notify_price_changes = models.BooleanField(default=True, verbose_name="Mudanças de Preço")
+    notify_status_changes = models.BooleanField(default=True, verbose_name="Mudanças de Status")
+    notify_recommendations = models.BooleanField(default=False, verbose_name="Recomendações")
+    
+    # Filtros de interesse (JSON fields para flexibilidade)
+    location_filters = models.JSONField(default=list, blank=True, verbose_name="Filtros de Localização")
+    property_types = models.JSONField(default=list, blank=True, verbose_name="Tipos de Propriedade")
+    price_min = models.DecimalField(max_digits=14, decimal_places=2, blank=True, null=True, verbose_name="Preço Mínimo")
+    price_max = models.DecimalField(max_digits=14, decimal_places=2, blank=True, null=True, verbose_name="Preço Máximo")
+    bedrooms_min = models.PositiveIntegerField(blank=True, null=True, verbose_name="Quartos Mínimos")
+    
+    # Configurações de horário
+    quiet_hours_enabled = models.BooleanField(default=False, verbose_name="Horário Silencioso Ativo")
+    quiet_hours_start = models.TimeField(default='22:00', verbose_name="Início Horário Silencioso")
+    quiet_hours_end = models.TimeField(default='08:00', verbose_name="Fim Horário Silencioso")
 
     class Meta:
         verbose_name = "Push Subscription"

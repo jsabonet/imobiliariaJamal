@@ -256,3 +256,89 @@ def unsubscribe_push(request):
             'success': False,
             'message': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def get_notification_preferences(request):
+    """
+    Endpoint para obter preferências de notificação de uma subscription
+    """
+    try:
+        endpoint = request.query_params.get('endpoint')
+        
+        if not endpoint:
+            return Response({
+                'success': False,
+                'message': 'Endpoint é obrigatório'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        subscription = PushSubscription.objects.filter(endpoint=endpoint, is_active=True).first()
+        
+        if not subscription:
+            return Response({
+                'success': False,
+                'message': 'Subscription não encontrada'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = PushSubscriptionSerializer(subscription)
+        return Response({
+            'success': True,
+            'preferences': serializer.data
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['PATCH'])
+def update_notification_preferences(request):
+    """
+    Endpoint para atualizar preferências de notificação
+    """
+    try:
+        endpoint = request.data.get('endpoint')
+        
+        if not endpoint:
+            return Response({
+                'success': False,
+                'message': 'Endpoint é obrigatório'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        subscription = PushSubscription.objects.filter(endpoint=endpoint, is_active=True).first()
+        
+        if not subscription:
+            return Response({
+                'success': False,
+                'message': 'Subscription não encontrada'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # Atualizar apenas os campos de preferências fornecidos
+        updatable_fields = [
+            'notify_new_properties', 'notify_price_changes', 
+            'notify_status_changes', 'notify_recommendations',
+            'location_filters', 'property_types', 
+            'price_min', 'price_max', 'bedrooms_min',
+            'quiet_hours_enabled', 'quiet_hours_start', 'quiet_hours_end'
+        ]
+        
+        for field in updatable_fields:
+            if field in request.data:
+                setattr(subscription, field, request.data[field])
+        
+        subscription.save()
+        
+        serializer = PushSubscriptionSerializer(subscription)
+        return Response({
+            'success': True,
+            'message': 'Preferências atualizadas com sucesso!',
+            'preferences': serializer.data
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

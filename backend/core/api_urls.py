@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     PropertyViewSet, PropertyImageViewSet, PropertyDocumentViewSet,
     AgentViewSet, EvaluationRequestViewSet, ContactMessageViewSet,
-    subscribe_push, unsubscribe_push
+    subscribe_push, unsubscribe_push, get_notification_preferences, update_notification_preferences
 )
 from .auth_views import admin_auth
 from .agents_views import agents_list, agent_detail, agent_reset_password
@@ -24,4 +24,6 @@ urlpatterns = [
     path('admin/agents/<int:agent_id>/reset-password/', agent_reset_password, name='agent-reset-password'),
     path('notifications/subscribe/', subscribe_push, name='subscribe-push'),
     path('notifications/unsubscribe/', unsubscribe_push, name='unsubscribe-push'),
+    path('notifications/preferences/', get_notification_preferences, name='get-notification-preferences'),
+    path('notifications/preferences/update/', update_notification_preferences, name='update-notification-preferences'),
 ]

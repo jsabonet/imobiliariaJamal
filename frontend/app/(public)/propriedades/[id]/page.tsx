@@ -15,6 +15,7 @@ import PropertyCard from '@/components/properties/PropertyCard';
 import PropertySchema from '@/components/seo/PropertySchema';
 import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import DynamicSEO from '@/components/seo/DynamicSEO';
+import NotificationPromptWrapper from '@/components/NotificationPromptWrapper';
 import { fetchPropertyById, submitContact, fetchProperties } from '@/lib/api';
 import { useFavorites } from '@/lib/useFavorites';
 
@@ -356,6 +357,18 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Notification Prompt - Aparece após 3 visualizações */}
+      <NotificationPromptWrapper 
+        trackOnMount={true} 
+        variant="modal"
+        options={{
+          viewsThreshold: 3,
+          delayAfterThreshold: 5000,
+          minTimeOnPage: 5000,
+          postponeDays: 2,
+        }}
+      />
+      
       {/* SEO */}
       <DynamicSEO
         title={property.title}
