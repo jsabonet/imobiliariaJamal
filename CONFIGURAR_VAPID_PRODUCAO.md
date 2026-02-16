@@ -21,31 +21,21 @@ cd /opt/JamalImobiliaria
 Execute no servidor:
 
 ```bash
-sudo docker compose exec backend python manage.py shell -c "
-from py_vapid import Vapid01
-vapid = Vapid01()
-vapid.generate_keys()
-print('VAPID_PUBLIC_KEY=' + vapid.public_key)
-print('VAPID_PRIVATE_KEY=' + vapid.private_key)
-"
+sudo docker compose exec backend python manage.py generate_vapid_keys
 ```
 
-**OU** use este método alternativo:
-
-```bash
-sudo docker compose exec backend python -c "
-from pywebpush import generate_vapid_keys
-vapid_keys = generate_vapid_keys()
-print('VAPID_PUBLIC_KEY=' + vapid_keys['public'])
-print('VAPID_PRIVATE_KEY=' + vapid_keys['private'])
-"
-```
-
-Isso vai gerar algo como:
+Este comando vai exibir algo como:
 
 ```
+🔑 Chaves VAPID geradas com sucesso!
+
+Adicione estas variáveis ao arquivo .env:
+
 VAPID_PUBLIC_KEY=BNtaaNMRqWSZwU6GCjkgSHW_gGyk_0GVamG8XQlHou1_hLSoc40GYjVvpf0TFvdXlfp3q5DXB-u3iB1mgViVYiI
-VAPID_PRIVATE_KEY=J8Qw9x2GKLBw3v4x5y6z7a8b9c0d1e2f3g4h5i6j7k8l
+VAPID_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg...
+-----END PRIVATE KEY-----
+VAPID_CLAIMS_EMAIL=mailto:contato@imobiliariajamal.com
 ```
 
 ### 3️⃣ Adicionar ao Arquivo .env
