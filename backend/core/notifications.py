@@ -4,7 +4,7 @@ Módulo para envio de notificações push
 import json
 import logging
 from pywebpush import webpush, WebPushException
-from py_vapid import Vapid01
+from py_vapid import Vapid
 from django.conf import settings
 from .models import PushSubscription
 
@@ -26,8 +26,8 @@ def get_vapid_instance():
             return None
             
         try:
-            # from_pem() funciona! (testado em check_vapid_api.py)
-            _vapid_instance = Vapid01.from_pem(vapid_private_key.encode('utf-8'))
+            # Usar Vapid (não Vapid01) - formato correto para pywebpush
+            _vapid_instance = Vapid.from_pem(vapid_private_key.encode('utf-8'))
             logger.info("Objeto Vapid inicializado com sucesso")
         except Exception as e:
             logger.error(f"Erro ao criar objeto Vapid: {e}")
