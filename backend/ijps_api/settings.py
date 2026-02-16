@@ -150,4 +150,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Push Notifications - VAPID Keys
 VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', 'MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgEXtlC2FeYcJhKQ7z7xk4riwshMVi5d3dxA34RW4pSRKhRANCAATbWmjTEalkmcFOhgo5IEh1v4BspP9BlWphvF0JR6Ltf4S0qHONBmI1b6X9Exb3V5X6d6uQ1wfrt4gdZoFYlWIi')
+# Converter \n literal em quebras de linha reais
+if VAPID_PRIVATE_KEY:
+    VAPID_PRIVATE_KEY = VAPID_PRIVATE_KEY.replace('\\n', '\n')
 VAPID_CLAIMS_EMAIL = os.getenv('VAPID_CLAIMS_EMAIL', 'mailto:contato@imobiliariajamal.com')
