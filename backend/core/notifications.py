@@ -3,36 +3,13 @@ Módulo para envio de notificações push
 """
 import json
 import logging
+import tempfile
+import os
 from pywebpush import webpush, WebPushException
-from py_vapid import Vapid01
 from django.conf import settings
 from .models import PushSubscription
 
 logger = logging.getLogger(__name__)
-
-# Cache do objeto Vapid para não reprocessar a chave toda vez
-_vapid_instance = None
-
-
-def get_vapid_instance():
-    """
-    Retorna instância do Vapid com a chave privada carregada
-    """
-    global _vapid_instance
-    
-    if _vapid_instance is None:
-        vapid_private_key = getattr(settings, 'VAPID_PRIVATE_KEY', None)
-        if not vapid_private_key:
-            return None
-            
-        try:
-            _vapid_instance = Vapid01.from_pem(vapid_private_key.encode('utf-8'))
-            logger.info("Objeto Vapid inicializado com sucesso")
-        except Exception as e:
-            logger.error(f"Erro ao criar objeto Vapid: {e}")
-            return None
-    
-    return _vapid_instance
 
 
 def send_push_notification(subscription, title, body, url=None, icon=None):
@@ -68,23 +45,33 @@ def send_push_notification(subscription, title, body, url=None, icon=None):
             }
         }
         
-        # Obter objeto Vapid (carrega chave privada PEM)
-        vapid = get_vapid_instance()
-        if not vapid:
-            logger.error("VAPID não configurado corretamente")
+        # Obter chave privada VAPID (salvar em arquivo temporário)
+        vapid_private_key = getattr(settings, 'VAPID_PRIVATE_KEY', None)
+        if not vapid_private_key:
+            logger.error("VAPID_PRIVATE_KEY não configurada")
             return False
         
         vapid_claims = {
             "sub": getattr(settings, 'VAPID_CLAIMS_EMAIL', 'mailto:contato@imobiliariajamal.com')
         }
         
-        # Enviar notificação usando objeto Vapid
-        webpush(
-            subscription_info=subscription_info,
-            data=json.dumps(notification_data),
-            vapid_private_key=vapid,
-            vapid_claims=vapid_claims
-        )
+        # Criar arquivo temporário com a chave PEM (pywebpush lê do arquivo)
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.pem', delete=False) as f:
+            f.write(vapid_private_key)
+            temp_key_path = f.name
+        
+        try:
+            # Enviar notificação usando caminho para arquivo PEM
+            webpush(
+                subscription_info=subscription_info,
+                data=json.dumps(notification_data),
+                vapid_private_key=temp_key_path,
+                vapid_claims=vapid_claims
+            )
+        finally:
+            # Limpar arquivo temporário
+            if os.path.exists(temp_key_path):
+                os.unlink(temp_key_path)
         
         logger.info(f"Notificação enviada com sucesso para subscription {subscription.id}")
         return True
