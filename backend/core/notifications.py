@@ -87,7 +87,7 @@ def send_push_notification(subscription, title, body, url=None, icon=None):
         # Gerar cabeçalhos VAPID manualmente usando sign()
         try:
             vapid_headers = vapid.sign(vapid_claims)
-            logger.debug(f "Vapid headers generated: {vapid_headers}")
+            logger.debug(f"Vapid headers generated: {vapid_headers}")
         except Exception as e:
             logger.error(f"Erro ao gerar headers VAPID: {e}")
             logger.error(f"Tipo error: {type(e)}")
