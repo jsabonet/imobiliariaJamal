@@ -14,7 +14,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Python dependencies
 COPY requirements.txt ./
+# Instalar cryptography primeiro para garantir versão compatível
+RUN pip install --no-cache-dir cryptography==41.0.7
 RUN pip install --no-cache-dir -r requirements.txt
+# Forçar reinstalar cryptography na versão correta (caso pywebpush tenha atualizado)
+RUN pip install --force-reinstall --no-deps cryptography==41.0.7
 
 # App code
 COPY . .
