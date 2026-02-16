@@ -69,39 +69,38 @@ def send_push_notification(subscription, title, body, url=None, icon=None):
             }
         }
         
-        # Obter objeto Vapid (from_pem funciona, testado!)
-        vapid = get_vapid_instance()
-        if not vapid:
-            logger.error("VAPID não configurado corretamente")
+        # Obter chave privada VAPID diretamente
+        vapid_private_key = getattr(settings, 'VAPID_PRIVATE_KEY', None)
+        if not vapid_private_key:
+            logger.error("VAPID_PRIVATE_KEY não configurada")
             return False
         
+        # Salvar chave em arquivo temporário (pywebpush funciona melhor lendo de arquivo)
+        import tempfile
+        import os
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.pem', delete=False) as f:
+            f.write(vapid_private_key)
+            temp_key_path = f.name
+        
         vapid_claims = {
-            "sub": getattr(settings, 'VAPID_CLAIMS_EMAIL', 'mailto:contato@imobiliariajamal.com'),
-            "aud": subscription.endpoint.split('/')[0] + '//' + subscription.endpoint.split('/')[2]  # https://fcm.googleapis.com
+            "sub": getattr(settings, 'VAPID_CLAIMS_EMAIL', 'mailto:contato@imobiliariajamal.com')
         }
         
-        logger.debug(f"Vapid object type: {type(vapid)}")
-        logger.debug(f"Vapid private_key type: {type(vapid.private_key)}")
-        logger.debug(f"Vapid claims: {vapid_claims}")
-        
-        # Gerar cabeçalhos VAPID manualmente usando sign()
         try:
-            vapid_headers = vapid.sign(vapid_claims)
-            logger.debug(f"Vapid headers generated: {vapid_headers}")
-        except Exception as e:
-            logger.error(f"Erro ao gerar headers VAPID: {e}")
-            logger.error(f"Tipo error: {type(e)}")
-            import traceback
-            logger.error(traceback.format_exc())
-            raise
-        
-        # Enviar notificação com headers gerados manualmente (sem passar vapid_private_key)
-        webpush(
-            subscription_info=subscription_info,
-            data=json.dumps(notification_data),
-            headers=vapid_headers,
-            ttl=0
-        )
+            # Enviar notificação usando arquivo PEM temporário
+            webpush(
+                subscription_info=subscription_info,
+                data=json.dumps(notification_data),
+                vapid_private_key=temp_key_path,
+                vapid_claims=vapid_claims
+            )
+        finally:
+            # Limpar arquivo temporário
+            try:
+                os.unlink(temp_key_path)
+            except:
+                pass
         
         logger.info(f"Notificação enviada com sucesso para subscription {subscription.id}")
         return True
