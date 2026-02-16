@@ -5,8 +5,12 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
-# System deps (optional, kept minimal)
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/*
+# System deps (opcional, mantido mínimo)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    fontconfig \
+    fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
 
 # Python dependencies
 COPY requirements.txt ./

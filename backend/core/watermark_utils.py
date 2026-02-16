@@ -80,20 +80,23 @@ def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
         
         # Desenhar sombra/contorno para melhor legibilidade
         shadow_offset = 2
-        # Sombra preta semi-transparente
-        draw.text(
-            (position[0] + shadow_offset, position[1] + shadow_offset),
-            watermark_text,
-            font=font,
-            fill=(0, 0, 0, opacity + 50)  # Sombra mais escura
-        )
+        # Sombra preta mais forte para destaque
+        for adj_x in range(-shadow_offset, shadow_offset + 1):
+            for adj_y in range(-shadow_offset, shadow_offset + 1):
+                if adj_x != 0 or adj_y != 0:
+                    draw.text(
+                        (position[0] + adj_x, position[1] + adj_y),
+                        watermark_text,
+                        font=font,
+                        fill=(0, 0, 0, 255)  # Contorno preto sólido
+                    )
         
-        # Texto principal branco semi-transparente
+        # Texto principal branco sólido
         draw.text(
             position,
             watermark_text,
             font=font,
-            fill=(255, 255, 255, opacity)
+            fill=(255, 255, 255, 255)  # Branco sólido para máximo contraste
         )
         
         # Também adicionar marca d'água diagonal no centro (mais sutil)
@@ -126,12 +129,24 @@ def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
             (img.height - center_text_height) // 2
         )
         
-        # Desenhar marca d'água central (mais transparente)
+        # Desenhar marca d'água central (com contorno forte)
+        # Contorno preto
+        for adj_x in range(-2, 3):
+            for adj_y in range(-2, 3):
+                if adj_x != 0 or adj_y != 0:
+                    center_draw.text(
+                        (center_position[0] + adj_x, center_position[1] + adj_y),
+                        watermark_text,
+                        font=center_font,
+                        fill=(0, 0, 0, 200)
+                    )
+        
+        # Texto branco
         center_draw.text(
             center_position,
             watermark_text,
             font=center_font,
-            fill=(255, 255, 255, opacity // 3)  # 1/3 da opacidade
+            fill=(255, 255, 255, 180)  # Meio transparente mas visível
         )
         
         # Rotacionar marca d'água central -30 graus
