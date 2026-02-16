@@ -6,7 +6,6 @@ import logging
 from pywebpush import webpush, WebPushException
 from django.conf import settings
 from .models import PushSubscription
-from py_vapid import Vapid01
 
 logger = logging.getLogger(__name__)
 
@@ -54,19 +53,11 @@ def send_push_notification(subscription, title, body, url=None, icon=None):
             logger.error("VAPID_PRIVATE_KEY não configurada nas settings")
             return False
         
-        # Carregar chave VAPID usando py_vapid para garantir formatação correta
-        try:
-            vapid = Vapid01()
-            vapid.from_pem(vapid_private_key.encode('utf-8'))
-        except Exception as e:
-            logger.error(f"Erro ao carregar chave VAPID: {e}")
-            return False
-        
-        # Enviar notificação
+        # Enviar notificação (pywebpush aceita chave PEM como string)
         webpush(
             subscription_info=subscription_info,
             data=json.dumps(notification_data),
-            vapid_private_key=vapid,
+            vapid_private_key=vapid_private_key,
             vapid_claims=vapid_claims
         )
         
