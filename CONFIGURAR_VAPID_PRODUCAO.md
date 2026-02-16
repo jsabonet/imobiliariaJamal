@@ -25,8 +25,19 @@ sudo docker compose exec backend python manage.py shell -c "
 from py_vapid import Vapid01
 vapid = Vapid01()
 vapid.generate_keys()
-print('VAPID_PUBLIC_KEY=' + vapid.public_key.decode())
-print('VAPID_PRIVATE_KEY=' + vapid.private_key.decode())
+print('VAPID_PUBLIC_KEY=' + vapid.public_key)
+print('VAPID_PRIVATE_KEY=' + vapid.private_key)
+"
+```
+
+**OU** use este método alternativo:
+
+```bash
+sudo docker compose exec backend python -c "
+from pywebpush import generate_vapid_keys
+vapid_keys = generate_vapid_keys()
+print('VAPID_PUBLIC_KEY=' + vapid_keys['public'])
+print('VAPID_PRIVATE_KEY=' + vapid_keys['private'])
 "
 ```
 
