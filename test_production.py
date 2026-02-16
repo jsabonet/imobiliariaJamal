@@ -126,7 +126,7 @@ def test_watermark():
     print("\n2️⃣ Verificando imagens no banco de dados...")
     
     total_images = PropertyImage.objects.count()
-    properties_with_images = Property.objects.filter(propertyimage__isnull=False).distinct().count()
+    properties_with_images = Property.objects.filter(images__isnull=False).distinct().count()
     
     print(f"   ✅ {total_images} imagens cadastradas")
     print(f"   ✅ {properties_with_images} propriedades com imagens")
