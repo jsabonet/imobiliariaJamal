@@ -28,6 +28,9 @@ services:
       DB_PORT: "5432"
       TIME_ZONE: ${TIME_ZONE:-Africa/Maputo}
       LANGUAGE_CODE: ${LANGUAGE_CODE:-pt}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
+      VAPID_CLAIMS_EMAIL: ${VAPID_CLAIMS_EMAIL:-mailto:contato@imobiliariajamal.com}
     depends_on:
       - db
     volumes:
