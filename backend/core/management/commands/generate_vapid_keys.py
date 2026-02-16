@@ -3,6 +3,8 @@ Django management command para gerar chaves VAPID
 """
 from django.core.management.base import BaseCommand
 from py_vapid import Vapid01
+from cryptography.hazmat.primitives import serialization
+import base64
 
 
 class Command(BaseCommand):
@@ -14,18 +16,17 @@ class Command(BaseCommand):
         
         # Extrair as chaves
         public_key = vapid.public_key.public_bytes(
-            encoding=vapid.serialization.Encoding.X962,
-            format=vapid.serialization.PublicFormat.UncompressedPoint
+            encoding=serialization.Encoding.X962,
+            format=serialization.PublicFormat.UncompressedPoint
         )
         
         private_key = vapid.private_key.private_bytes(
-            encoding=vapid.serialization.Encoding.PEM,
-            format=vapid.serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=vapid.serialization.NoEncryption()
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
         )
         
         # Converter para base64 URL-safe
-        import base64
         public_key_b64 = base64.urlsafe_b64encode(public_key).decode('utf-8').rstrip('=')
         
         self.stdout.write(self.style.SUCCESS('\n🔑 Chaves VAPID geradas com sucesso!\n'))
