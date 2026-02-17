@@ -154,3 +154,7 @@ VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', 'MIGHAgEAMBMGByqGSM49AgEGCCqG
 if VAPID_PRIVATE_KEY:
     VAPID_PRIVATE_KEY = VAPID_PRIVATE_KEY.replace('\\n', '\n')
 VAPID_CLAIMS_EMAIL = os.getenv('VAPID_CLAIMS_EMAIL', 'mailto:contato@imobiliariajamal.com')
+
+# Sistema de Marca d'Água
+# Desativado temporariamente para restauração de imagens originais
+ENABLE_WATERMARK = os.getenv('ENABLE_WATERMARK', 'False') == 'True'

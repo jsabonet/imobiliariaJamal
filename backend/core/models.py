@@ -177,10 +177,14 @@ class PropertyImage(models.Model):
 
     def save(self, *args, **kwargs):
         """Sobrescreve save para aplicar marca d'água automaticamente"""
+        from django.conf import settings
         from .watermark_utils import add_watermark
         
+        # Verificar se o sistema de marca d'água está ativado
+        enable_watermark = getattr(settings, 'ENABLE_WATERMARK', False)
+        
         # Se está salvando uma nova imagem (não atualização de campos)
-        if self.image and hasattr(self.image, 'file'):
+        if enable_watermark and self.image and hasattr(self.image, 'file'):
             try:
                 # Aplicar marca d'água simples
                 watermarked_image = add_watermark(
@@ -194,6 +198,8 @@ class PropertyImage(models.Model):
             except Exception as e:
                 # Em caso de erro, continuar sem marca d'água e registrar erro
                 print(f"Aviso: Não foi possível aplicar marca d'água: {e}")
+        elif not enable_watermark and self.image:
+            print(f"ℹ️ Marca d'água desativada - imagem salva sem processamento")
         
         super().save(*args, **kwargs)
 
