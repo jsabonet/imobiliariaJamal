@@ -31,7 +31,7 @@ class PropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = [
-            'id', 'title', 'description', 'reference_code', 'location', 
+            'id', 'title', 'description', 'location', 
             'address', 'city', 'neighborhood', 'province', 'district', 'country', 'zip_code', 'latitude', 'longitude',
             'price', 'currency', 'condominium_fee', 'ipra', 'iptu', 'monthly_expenses',
             'type', 'status', 'legal_status',
