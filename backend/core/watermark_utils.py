@@ -34,87 +34,29 @@ def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
         if img.mode != 'RGBA':
             img = img.convert('RGBA')
         
-        # Criar camada para a marca d'água
-        watermark_layer = Image.new('RGBA', img.size, (0, 0, 0, 0))
-        draw = ImageDraw.Draw(watermark_layer)
-        
-        # Calcular tamanho da fonte baseado no tamanho da imagem
-        # Usar aproximadamente 3% da largura da imagem
-        font_size = max(20, int(img.width * 0.03))
-        
-        try:
-            # Tentar usar fonte TrueType (pode não estar disponível em todos os sistemas)
-            # Usar fonte bold para melhor visibilidade
-            font_paths = [
-                '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',  # Linux
-                'C:\\Windows\\Fonts\\arialbd.ttf',  # Windows - Arial Bold
-                'C:\\Windows\\Fonts\\Arial.ttf',  # Windows - Arial
-                '/System/Library/Fonts/Helvetica.ttc',  # macOS
-            ]
-            
-            font = None
-            for font_path in font_paths:
-                if os.path.exists(font_path):
-                    font = ImageFont.truetype(font_path, font_size)
-                    break
-            
-            if font is None:
-                # Fallback para fonte padrão
-                font = ImageFont.load_default()
-        except Exception:
-            # Se falhar, usar fonte padrão
-            font = ImageFont.load_default()
-        
-        # Calcular posição do texto
-        # Usar textbbox para obter dimensões precisas
-        bbox = draw.textbbox((0, 0), watermark_text, font=font)
-        text_width = bbox[2] - bbox[0]
-        text_height = bbox[3] - bbox[1]
-        
-        # Posicionar no canto inferior direito com margem
-        margin = 20
-        position = (
-            img.width - text_width - margin,
-            img.height - text_height - margin
-        )
-        
-        # Desenhar sombra/contorno sutil para legibilidade
-        shadow_offset = 1
-        # Sombra preta suave
-        for adj_x in range(-shadow_offset, shadow_offset + 1):
-            for adj_y in range(-shadow_offset, shadow_offset + 1):
-                if adj_x != 0 or adj_y != 0:
-                    draw.text(
-                        (position[0] + adj_x, position[1] + adj_y),
-                        watermark_text,
-                        font=font,
-                        fill=(0, 0, 0, 100)  # Contorno preto suave
-                    )
-        
-        # Texto principal branco suave
-        draw.text(
-            position,
-            watermark_text,
-            font=font,
-            fill=(255, 255, 255, 100)  # Branco suave e discreto
-        )
-        
-        # Também adicionar marca d'água diagonal no centro (mais sutil)
-        # Criar imagem rotacionada para marca d'água central
+        # Criar imagem para marca d'água central diagonal
         center_watermark = Image.new('RGBA', img.size, (0, 0, 0, 0))
         center_draw = ImageDraw.Draw(center_watermark)
         
-        # Calcular fonte maior para marca d'água central
+        # Calcular fonte para marca d'água central (5% da largura)
         center_font_size = max(40, int(img.width * 0.05))
+        
+        # Caminhos de fontes para tentar
+        font_paths = [
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',  # Linux
+            'C:\\Windows\\Fonts\\arialbd.ttf',  # Windows - Arial Bold
+            'C:\\Windows\\Fonts\\Arial.ttf',  # Windows - Arial
+            '/System/Library/Fonts/Helvetica.ttc',  # macOS
+        ]
+        
         try:
-            if font_paths:
-                for font_path in font_paths:
-                    if os.path.exists(font_path):
-                        center_font = ImageFont.truetype(font_path, center_font_size)
-                        break
-                else:
-                    center_font = ImageFont.load_default()
-            else:
+            center_font = None
+            for font_path in font_paths:
+                if os.path.exists(font_path):
+                    center_font = ImageFont.truetype(font_path, center_font_size)
+                    break
+            
+            if center_font is None:
                 center_font = ImageFont.load_default()
         except Exception:
             center_font = ImageFont.load_default()
@@ -129,8 +71,8 @@ def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
             (img.height - center_text_height) // 2
         )
         
-        # Desenhar marca d'água central sutil
-        # Contorno preto suave
+        # Desenhar marca d'água central com opacidades originais
+        # Contorno preto (sombra escura)
         for adj_x in range(-1, 2):
             for adj_y in range(-1, 2):
                 if adj_x != 0 or adj_y != 0:
@@ -138,23 +80,22 @@ def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
                         (center_position[0] + adj_x, center_position[1] + adj_y),
                         watermark_text,
                         font=center_font,
-                        fill=(0, 0, 0, 80)  # Contorno muito suave
+                        fill=(0, 0, 0, opacity + 50)  # Sombra mais escura
                     )
         
-        # Texto branco suave
+        # Texto branco com opacidade sutil
         center_draw.text(
             center_position,
             watermark_text,
             font=center_font,
-            fill=(255, 255, 255, 80)  # Muito transparente e discreto
+            fill=(255, 255, 255, opacity // 3)  # 1/3 da opacidade (muito sutil)
         )
         
         # Rotacionar marca d'água central -30 graus
         center_watermark = center_watermark.rotate(-30, expand=False, fillcolor=(0, 0, 0, 0))
         
-        # Combinar todas as camadas
+        # Combinar imagem original com marca d'água central
         watermarked = Image.alpha_composite(img, center_watermark)
-        watermarked = Image.alpha_composite(watermarked, watermark_layer)
         
         # Converter de volta para RGB (remover canal alpha para JPEG)
         if watermarked.mode == 'RGBA':
