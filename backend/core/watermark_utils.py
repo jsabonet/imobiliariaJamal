@@ -10,14 +10,14 @@ import sys
 import os
 
 
-def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
+def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=64):
     """
     Adiciona marca d'água em uma imagem
     
     Args:
         image_file: Arquivo de imagem (InMemoryUploadedFile ou path)
         watermark_text: Texto da marca d'água (padrão: "IJPS IMOBILIÁRIA")
-        opacity: Opacidade da marca d'água 0-255 (padrão: 128 = 50%)
+        opacity: Opacidade da marca d'água 0-255 (padrão: 64 = 25%)
     
     Returns:
         InMemoryUploadedFile: Imagem com marca d'água aplicada
@@ -38,14 +38,14 @@ def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
         center_watermark = Image.new('RGBA', img.size, (0, 0, 0, 0))
         center_draw = ImageDraw.Draw(center_watermark)
         
-        # Calcular fonte para marca d'água central (5% da largura)
-        center_font_size = max(40, int(img.width * 0.05))
+        # Calcular fonte para marca d'água central (6% da largura)
+        center_font_size = max(40, int(img.width * 0.06))
         
-        # Caminhos de fontes para tentar
+        # Caminhos de fontes para tentar (bold para melhor visibilidade)
         font_paths = [
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',  # Linux
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',  # Linux - Bold
             'C:\\Windows\\Fonts\\arialbd.ttf',  # Windows - Arial Bold
-            'C:\\Windows\\Fonts\\Arial.ttf',  # Windows - Arial
+            'C:\\Windows\\Fonts\\arial.ttf',  # Windows - Arial fallback
             '/System/Library/Fonts/Helvetica.ttc',  # macOS
         ]
         
@@ -71,25 +71,21 @@ def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
             (img.height - center_text_height) // 2
         )
         
-        # Desenhar marca d'água elegante e balanceada
-        # Sombra sutil para dar profundidade
-        center_draw.text(
-            (center_position[0] + 2, center_position[1] + 2),
-            watermark_text,
-            font=center_font,
-            fill=(0, 0, 0, opacity // 2)  # Sombra suave (25%)
-        )
-        
-        # Texto branco com boa visibilidade mas elegante
+        # Desenhar marca d'água sutil e elegante (25% opacidade)
         center_draw.text(
             center_position,
             watermark_text,
             font=center_font,
-            fill=(255, 255, 255, opacity)  # 50% opacidade - visível e elegante
+            fill=(255, 255, 255, opacity)  # 25% opacidade - discreto e elegante
         )
         
-        # Rotacionar marca d'água central -30 graus
-        center_watermark = center_watermark.rotate(-30, expand=False, fillcolor=(0, 0, 0, 0))
+        # Rotacionar marca d'água central -30 graus com anti-aliasing
+        center_watermark = center_watermark.rotate(
+            -30, 
+            expand=False, 
+            fillcolor=(0, 0, 0, 0),
+            resample=Image.BICUBIC  # Anti-aliasing para evitar pixelização
+        )
         
         # Combinar imagem original com marca d'água central
         watermarked = Image.alpha_composite(img, center_watermark)
