@@ -71,24 +71,21 @@ def add_watermark(image_file, watermark_text="IJPS IMOBILIÁRIA", opacity=128):
             (img.height - center_text_height) // 2
         )
         
-        # Desenhar marca d'água central com opacidades originais
-        # Contorno preto (sombra escura)
-        for adj_x in range(-1, 2):
-            for adj_y in range(-1, 2):
-                if adj_x != 0 or adj_y != 0:
-                    center_draw.text(
-                        (center_position[0] + adj_x, center_position[1] + adj_y),
-                        watermark_text,
-                        font=center_font,
-                        fill=(0, 0, 0, opacity + 50)  # Sombra mais escura
-                    )
+        # Desenhar marca d'água elegante e balanceada
+        # Sombra sutil para dar profundidade
+        center_draw.text(
+            (center_position[0] + 2, center_position[1] + 2),
+            watermark_text,
+            font=center_font,
+            fill=(0, 0, 0, opacity // 2)  # Sombra suave (25%)
+        )
         
-        # Texto branco com opacidade sutil
+        # Texto branco com boa visibilidade mas elegante
         center_draw.text(
             center_position,
             watermark_text,
             font=center_font,
-            fill=(255, 255, 255, opacity // 3)  # 1/3 da opacidade (muito sutil)
+            fill=(255, 255, 255, opacity)  # 50% opacidade - visível e elegante
         )
         
         # Rotacionar marca d'água central -30 graus
