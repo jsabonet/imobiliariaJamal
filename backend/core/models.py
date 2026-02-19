@@ -394,3 +394,43 @@ class PushSubscription(models.Model):
 
     def __str__(self):
         return f"Subscription {self.id} - {self.created_at.strftime('%d/%m/%Y')}"
+
+
+class TemporaryWatermarkedImage(models.Model):
+    """
+    Modelo para armazenar imagens temporárias com marca d'água
+    para uso administrativo em outras plataformas
+    """
+    original_image = models.ImageField(
+        upload_to='temp_watermark/',
+        verbose_name="Imagem Original"
+    )
+    watermarked_image = models.ImageField(
+        upload_to='temp_watermark/',
+        verbose_name="Imagem com Marca D'água",
+        blank=True,
+        null=True
+    )
+    original_filename = models.CharField(
+        max_length=255,
+        verbose_name="Nome Original"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Criado em"
+    )
+    
+    class Meta:
+        verbose_name = "Imagem Temporária com Marca D'água"
+        verbose_name_plural = "Imagens Temporárias com Marca D'água"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.original_filename} - {self.created_at.strftime('%d/%m/%Y %H:%M')}"
+    
+    def is_expired(self):
+        """Verifica se a imagem já passou de 2 horas"""
+        from django.utils import timezone
+        from datetime import timedelta
+        expiry_time = self.created_at + timedelta(hours=2)
+        return timezone.now() > expiry_time

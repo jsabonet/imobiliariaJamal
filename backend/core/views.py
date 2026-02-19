@@ -342,3 +342,136 @@ def update_notification_preferences(request):
             'success': False,
             'message': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+def upload_watermark_image(request):
+    """
+    Upload de imagem para aplicação automática de marca d'água
+    Uso administrativo para reutilização em outras plataformas
+    """
+    from .models import TemporaryWatermarkedImage
+    from .watermark_utils import add_watermark
+    from io import BytesIO
+    from django.core.files.base import ContentFile
+    import os
+    
+    try:
+        if 'image' not in request.FILES:
+            return Response({
+                'success': False,
+                'message': 'Nenhuma imagem foi enviada'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        uploaded_file = request.FILES['image']
+        
+        # Criar registro temporário
+        temp_image = TemporaryWatermarkedImage.objects.create(
+            original_image=uploaded_file,
+            original_filename=uploaded_file.name
+        )
+        
+        # Aplicar marca d'água usando o sistema existente
+        with open(temp_image.original_image.path, 'rb') as f:
+            original_bytes = BytesIO(f.read())
+        
+        watermarked_bytes = add_watermark(original_bytes, watermark_text='IJPS IMOBILIÁRIA')
+        
+        # Salvar imagem com marca d'água
+        filename_without_ext = os.path.splitext(temp_image.original_filename)[0]
+        ext = os.path.splitext(temp_image.original_filename)[1]
+        watermarked_filename = f"{filename_without_ext}_watermarked{ext}"
+        
+        temp_image.watermarked_image.save(
+            watermarked_filename,
+            ContentFile(watermarked_bytes.read()),
+            save=True
+        )
+        
+        return Response({
+            'success': True,
+            'message': 'Marca d\'água aplicada com sucesso!',
+            'data': {
+                'id': temp_image.id,
+                'original_filename': temp_image.original_filename,
+                'watermarked_url': request.build_absolute_uri(temp_image.watermarked_image.url),
+                'created_at': temp_image.created_at.isoformat(),
+                'expires_in_hours': 2
+            }
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'message': f'Erro ao processar imagem: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def list_watermark_images(request):
+    """
+    Listar todas as imagens temporárias com marca d'água
+    (apenas as não expiradas)
+    """
+    from .models import TemporaryWatermarkedImage
+    
+    try:
+        images = TemporaryWatermarkedImage.objects.all().order_by('-created_at')
+        
+        # Filtrar apenas não expiradas
+        active_images = [img for img in images if not img.is_expired()]
+        
+        data = [{
+            'id': img.id,
+            'original_filename': img.original_filename,
+            'watermarked_url': request.build_absolute_uri(img.watermarked_image.url) if img.watermarked_image else None,
+            'created_at': img.created_at.isoformat(),
+            'is_expired': img.is_expired()
+        } for img in active_images]
+        
+        return Response({
+            'success': True,
+            'count': len(data),
+            'data': data
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['DELETE'])
+def delete_watermark_image(request, image_id):
+    """
+    Deletar uma imagem temporária específica
+    """
+    from .models import TemporaryWatermarkedImage
+    
+    try:
+        image = TemporaryWatermarkedImage.objects.get(id=image_id)
+        
+        # Deletar arquivos físicos
+        if image.original_image:
+            image.original_image.delete()
+        if image.watermarked_image:
+            image.watermarked_image.delete()
+        
+        image.delete()
+        
+        return Response({
+            'success': True,
+            'message': 'Imagem deletada com sucesso'
+        }, status=status.HTTP_200_OK)
+        
+    except TemporaryWatermarkedImage.DoesNotExist:
+        return Response({
+            'success': False,
+            'message': 'Imagem não encontrada'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

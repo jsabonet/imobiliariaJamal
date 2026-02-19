@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { FiHome, FiFileText, FiMail, FiGrid, FiSettings, FiLogOut, FiArrowLeft, FiUsers } from 'react-icons/fi';
+import { FiHome, FiFileText, FiMail, FiGrid, FiSettings, FiLogOut, FiArrowLeft, FiUsers, FiImage } from 'react-icons/fi';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -19,6 +19,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
     { href: '/dashboard/agentes', icon: FiUsers, label: 'Agentes' },
     { href: '/dashboard/avaliacoes', icon: FiFileText, label: 'Avaliações' },
     { href: '/dashboard/contactos', icon: FiMail, label: 'Contactos' },
+    { href: '/dashboard/marca-dagua', icon: FiImage, label: 'Marca D\'água' },
   ];
 
   async function handleLogout() {
