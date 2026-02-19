@@ -222,6 +222,19 @@ class Property(models.Model):
                     logger.error(f"[Geocode] Property {self.id} - Erro: {str(e)}")
                     break
             
+            # Se falhou, usar coordenadas do centro da cidade como fallback
+            city_centers = {
+                'Maputo': (-25.9655, 32.5832),
+                'Matola': (-25.9622, 32.4589),
+                'Beira': (-19.8436, 34.8389),
+                'Nampula': (-15.1165, 39.2666),
+            }
+            
+            if self.city and self.city in city_centers:
+                lat, lon = city_centers[self.city]
+                logger.info(f"[Geocode] Property {self.id} - Usando coordenadas do centro de {self.city}")
+                return (lat, lon, True)
+            
             return (None, None, False)
             
         except ImportError as e:
