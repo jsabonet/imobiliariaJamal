@@ -156,6 +156,66 @@ class Property(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_approximate_coordinates(self):
+        """
+        Retorna coordenadas aproximadas baseadas em endereço quando lat/long não estão disponíveis.
+        Usa geocodificação com OpenStreetMap Nominatim.
+        Retorna tupla (latitude, longitude, is_approximate) ou (None, None, False)
+        """
+        # Se já tem coordenadas exatas, retorná-las
+        if self.latitude and self.longitude:
+            return (float(self.latitude), float(self.longitude), False)
+        
+        # Tentar geocodificar com informações de localização disponíveis
+        try:
+            from geopy.geocoders import Nominatim
+            from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+            import time
+            
+            geolocator = Nominatim(user_agent="ijps_imobiliaria_v1.0", timeout=10)
+            
+            # Construir string de endereço com as informações disponíveis
+            # Priorizar: bairro, cidade, província, país
+            address_parts = []
+            
+            if self.neighborhood:
+                address_parts.append(self.neighborhood)
+            if self.city:
+                address_parts.append(self.city)
+            if self.province:
+                address_parts.append(self.province)
+            if self.country:
+                address_parts.append(self.country)
+            
+            if not address_parts:
+                return (None, None, False)
+            
+            # Criar string de endereço
+            address_string = ", ".join(address_parts)
+            
+            # Tentar geocodificar (com retry para evitar rate limiting)
+            max_retries = 2
+            for attempt in range(max_retries):
+                try:
+                    location = geolocator.geocode(address_string)
+                    if location:
+                        return (location.latitude, location.longitude, True)
+                    break
+                except GeocoderTimedOut:
+                    if attempt < max_retries - 1:
+                        time.sleep(1)
+                    continue
+                except Exception:
+                    break
+            
+            return (None, None, False)
+            
+        except ImportError:
+            # Se geopy não estiver instalado, retornar None
+            return (None, None, False)
+        except Exception:
+            return (None, None, False)
 
 
 class PropertyImage(models.Model):

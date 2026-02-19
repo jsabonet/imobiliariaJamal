@@ -6,6 +6,53 @@
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '';
 
 /**
+ * Detecta informações do navegador
+ */
+function getBrowserInfo() {
+  const ua = navigator.userAgent;
+  const isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor);
+  const isEdge = /Edg/.test(ua);
+  const isFirefox = /Firefox/.test(ua);
+  const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
+  const isOpera = /OPR/.test(ua);
+  
+  return {
+    isChrome,
+    isEdge,
+    isFirefox,
+    isSafari,
+    isOpera,
+    name: isChrome ? 'Chrome' : isEdge ? 'Edge' : isFirefox ? 'Firefox' : isSafari ? 'Safari' : isOpera ? 'Opera' : 'Unknown',
+    userAgent: ua
+  };
+}
+
+/**
+ * Verifica se o navegador realmente suporta push notifications
+ */
+function checkBrowserPushSupport(): { supported: boolean; reason?: string } {
+  const browser = getBrowserInfo();
+  
+  // Safari não suporta Web Push API padrão
+  if (browser.isSafari) {
+    return {
+      supported: false,
+      reason: 'Safari não suporta Web Push API. Use Chrome, Firefox ou Edge para receber notificações.'
+    };
+  }
+  
+  // Firefox precisa estar em HTTPS (já temos)
+  if (browser.isFirefox && window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+    return {
+      supported: false,
+      reason: 'Firefox requer HTTPS para notificações push.'
+    };
+  }
+  
+  return { supported: true };
+}
+
+/**
  * Converte uma chave VAPID base64 para Uint8Array
  */
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
@@ -32,14 +79,23 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
  * Verifica se o navegador suporta notificações push
  */
 export function isPushNotificationSupported(): boolean {
+  const browser = getBrowserInfo();
   const hasServiceWorker = 'serviceWorker' in navigator;
   const hasPushManager = 'PushManager' in window;
   const hasNotification = 'Notification' in window;
   
   console.log('🔍 [Suporte] Verificando APIs disponíveis:');
+  console.log(`   - Navegador: ${browser.name}`);
   console.log(`   - Service Worker: ${hasServiceWorker ? '✅' : '❌'}`);
   console.log(`   - Push Manager: ${hasPushManager ? '✅' : '❌'}`);
   console.log(`   - Notification: ${hasNotification ? '✅' : '❌'}`);
+  
+  // Verificar suporte específico do navegador
+  const browserSupport = checkBrowserPushSupport();
+  if (!browserSupport.supported) {
+    console.log(`   - ⚠️ ${browserSupport.reason}`);
+    return false;
+  }
   
   return hasServiceWorker && hasPushManager && hasNotification;
 }
@@ -88,8 +144,19 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
   console.log('📱 ═══════════════════════════════════════════════════════\n');
   
   try {
+    // Mostrar informações do navegador
+    const browser = getBrowserInfo();
+    console.log('🌐 [Navegador]:', browser.name);
+    console.log('🌐 [User Agent]:', browser.userAgent.substring(0, 80) + '...\n');
+    
     // Verificar suporte
     console.log('📱 [Subscribe] PASSO 1: Verificar suporte do navegador');
+    const browserSupport = checkBrowserPushSupport();
+    if (!browserSupport.supported) {
+      console.log('📱 [Subscribe] ❌ ABORTADO:', browserSupport.reason);
+      throw new Error(browserSupport.reason || 'Navegador não suportado');
+    }
+    
     if (!isPushNotificationSupported()) {
       console.log('📱 [Subscribe] ❌ ABORTADO: Navegador não suporta push notifications');
       throw new Error('Push notifications não são suportadas');
@@ -162,13 +229,41 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
       const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource;
       
       console.log('📱 [Subscribe] Chamando pushManager.subscribe()...');
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey
-      });
+      
+      try {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey
+        });
 
-      console.log('📱 [Subscribe] ✅ Nova push subscription criada!');
-      console.log('📱 [Subscribe] Endpoint:', subscription.endpoint.substring(0, 60) + '...');
+        console.log('📱 [Subscribe] ✅ Nova push subscription criada!');
+        console.log('📱 [Subscribe] Endpoint:', subscription.endpoint.substring(0, 60) + '...');
+      } catch (subscribeError: any) {
+        console.error('📱 [Subscribe] ❌ Erro ao criar subscription:', subscribeError);
+        
+        // Tratamento específico de erros
+        if (subscribeError.name === 'AbortError') {
+          const browser = getBrowserInfo();
+          const errorMsg = `Erro ao conectar ao serviço de push do ${browser.name}. ` +
+            'Possíveis causas:\n' +
+            '1. Servidor de push do navegador temporariamente indisponível\n' +
+            '2. Problema de rede ou firewall bloqueando a conexão\n' +
+            (browser.isFirefox ? '3. Firefox pode ter restrições em modo privado ou com extensões de privacidade\n' : '') +
+            '4. Tentativas muito rápidas de registro\n\n' +
+            'Sugestões:\n' +
+            '- Aguarde alguns minutos e tente novamente\n' +
+            '- Desative temporariamente extensões de privacidade/bloqueadores\n' +
+            (browser.isFirefox ? '- Use modo normal (não privado) do Firefox\n' : '') +
+            '- Verifique sua conexão de internet';
+          
+          console.log('📱 [Subscribe] ℹ️  Detalhes do erro:\n', errorMsg);
+          throw new Error(errorMsg);
+        } else if (subscribeError.name === 'NotAllowedError') {
+          throw new Error('Permissão negada para criar subscription. Verifique as configurações do navegador.');
+        } else {
+          throw subscribeError;
+        }
+      }
     } else {
       console.log('📱 [Subscribe] ✅ Subscription já existe (reutilizando)');
       console.log('📱 [Subscribe] Endpoint:', subscription.endpoint.substring(0, 60) + '...');
@@ -382,3 +477,48 @@ export async function showTestNotification(): Promise<void> {
   console.log('🧪 [TestNotification] ✅ Notificação exibida com sucesso!');
   console.log('🧪 ═══════════════════════════════════════════════════════\n');
 }
+
+/**
+ * Retorna informações sobre o navegador e compatibilidade
+ */
+export function getBrowserCompatibilityInfo() {
+  const browser = getBrowserInfo();
+  const support = checkBrowserPushSupport();
+  const hasAPIs = isPushNotificationSupported();
+  
+  return {
+    browser: browser.name,
+    userAgent: browser.userAgent,
+    supported: support.supported && hasAPIs,
+    reason: support.reason,
+    details: {
+      hasServiceWorker: 'serviceWorker' in navigator,
+      hasPushManager: 'PushManager' in window,
+      hasNotification: 'Notification' in window,
+      permission: getNotificationPermission(),
+      isHTTPS: window.location.protocol === 'https:',
+    }
+  };
+}
+
+/**
+ * Mensagem amigável sobre compatibilidade do navegador
+ */
+export function getBrowserCompatibilityMessage(): string {
+  const info = getBrowserCompatibilityInfo();
+  
+  if (info.supported) {
+    return `✅ ${info.browser} suporta notificações push!`;
+  }
+  
+  if (info.browser === 'Safari') {
+    return '⚠️ Safari não suporta notificações push web. Use Chrome, Firefox ou Edge.';
+  }
+  
+  if (!info.details.isHTTPS && window.location.hostname !== 'localhost') {
+    return '⚠️ Notificações push requerem HTTPS. Acesse o site via https://';
+  }
+  
+  return info.reason || '⚠️ Seu navegador não suporta notificações push.';
+}
+

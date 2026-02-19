@@ -26,6 +26,9 @@ def get_vapid_instance():
             return None
             
         try:
+            # Converter \n literais em quebras de linha reais
+            vapid_private_key = vapid_private_key.replace('\\n', '\n')
+            
             # Usar Vapid (não Vapid01) - formato correto para pywebpush
             _vapid_instance = Vapid.from_pem(vapid_private_key.encode('utf-8'))
             logger.info("Objeto Vapid inicializado com sucesso")
@@ -74,6 +77,9 @@ def send_push_notification(subscription, title, body, url=None, icon=None):
         if not vapid_private_key:
             logger.error("VAPID_PRIVATE_KEY não configurada")
             return False
+        
+        # Converter \n literais em quebras de linha reais
+        vapid_private_key = vapid_private_key.replace('\\n', '\n')
         
         # Salvar chave em arquivo temporário (pywebpush funciona melhor lendo de arquivo)
         import tempfile

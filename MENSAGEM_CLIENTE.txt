@@ -1,0 +1,23 @@
+Olá! 👋
+
+Implementamos duas funcionalidades importantes no site da IJPS Imobiliária:
+
+🔔 SISTEMA DE NOTIFICAÇÕES PUSH
+Agora os visitantes do site podem ativar notificações para receber alertas instantâneos quando você:
+- Adicionar novas propriedades
+- Atualizar informações de propriedades existentes
+
+Funciona assim: O visitante clica no ícone do sino 🔔 no site, autoriza as notificações, e pronto! Ele receberá alertas no celular ou computador mesmo quando não estiver navegando no site.
+
+💧 SISTEMA DE MARCA D'ÁGUA
+Todas as fotos das propriedades agora têm automaticamente a marca "IJPS IMOBILIÁRIA" de forma discreta e profissional:
+- Aparece no centro das imagens em diagonal
+- Baixa opacidade (25%) - não atrapalha a visualização
+- Protege suas fotos contra uso não autorizado
+
+As 622 imagens das 48 propriedades já estão com a marca aplicada ✅
+
+⚠️ IMPORTANTE:
+O sistema de notificações foi atualizado hoje. Quem já tinha ativado antes precisa reativar clicando no sino novamente (é só 1 clique).
+
+Tudo está funcionando e pronto para uso! 🚀

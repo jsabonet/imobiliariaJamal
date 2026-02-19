@@ -1,28 +1,57 @@
 'use client';
 
 import React from 'react';
-import { FiMapPin, FiExternalLink } from 'react-icons/fi';
+import { FiMapPin, FiExternalLink, FiInfo } from 'react-icons/fi';
 
 type MapPlaceholderProps = {
   latitude?: number | null;
   longitude?: number | null;
+  approximateLatitude?: number | null;
+  approximateLongitude?: number | null;
+  isApproximateLocation?: boolean;
   height?: number;
   className?: string;
 };
 
-export default function MapPlaceholder({ latitude, longitude, height = 256, className = '' }: MapPlaceholderProps) {
-  const hasCoords = typeof latitude === 'number' && typeof longitude === 'number';
+export default function MapPlaceholder({ 
+  latitude, 
+  longitude, 
+  approximateLatitude, 
+  approximateLongitude, 
+  isApproximateLocation = false,
+  height = 256, 
+  className = '' 
+}: MapPlaceholderProps) {
+  // Determinar qual conjunto de coordenadas usar
+  const exactCoords = typeof latitude === 'number' && typeof longitude === 'number';
+  const approxCoords = typeof approximateLatitude === 'number' && typeof approximateLongitude === 'number';
+  
+  const hasCoords = exactCoords || approxCoords;
+  const lat = exactCoords ? (latitude as number) : (approximateLatitude as number);
+  const lon = exactCoords ? (longitude as number) : (approximateLongitude as number);
+  const isApprox = !exactCoords && approxCoords;
 
   if (hasCoords) {
-    const lat = latitude as number;
-    const lon = longitude as number;
-    // OpenStreetMap embed with better zoom and view
-    const zoom = 15;
+    // Ajustar zoom baseado no tipo de localização
+    const zoom = isApprox ? 14 : 15; // Zoom menor para localização aproximada
     const src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.01}%2C${lat - 0.01}%2C${lon + 0.01}%2C${lat + 0.01}&layer=mapnik&marker=${lat}%2C${lon}`;
     const link = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
     
     return (
       <div className={`w-full ${className}`}>
+        {/* Aviso de localização aproximada */}
+        {isApprox && (
+          <div className="mb-3 flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <FiInfo className="text-amber-600 flex-shrink-0 mt-0.5" size={18} />
+            <div className="text-sm text-amber-800">
+              <p className="font-medium">Localização Aproximada</p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                Este mapa mostra a localização geral do bairro. Entre em contacto para obter o endereço exato do imóvel.
+              </p>
+            </div>
+          </div>
+        )}
+        
         <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm" style={{ height }}>
           <iframe
             title="Mapa da Propriedade"
@@ -34,11 +63,14 @@ export default function MapPlaceholder({ latitude, longitude, height = 256, clas
             className="w-full h-full"
           />
         </div>
+        
         <div className="mt-3 flex items-center justify-between text-sm">
           <div className="flex items-center gap-2 text-gray-600">
-            <FiMapPin size={16} className="text-primary" />
+            <FiMapPin size={16} className={isApprox ? "text-amber-500" : "text-primary"} />
             <span>
-              <span className="font-medium">Coordenadas:</span> {lat.toFixed(6)}, {lon.toFixed(6)}
+              <span className="font-medium">
+                {isApprox ? 'Área aproximada' : 'Coordenadas'}:
+              </span> {lat.toFixed(6)}, {lon.toFixed(6)}
             </span>
           </div>
           <a 
@@ -63,3 +95,4 @@ export default function MapPlaceholder({ latitude, longitude, height = 256, clas
     </div>
   );
 }
+

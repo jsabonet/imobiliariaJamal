@@ -27,12 +27,18 @@ class PropertySerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True
     )
+    
+    # Campos adicionais para coordenadas aproximadas
+    approximate_latitude = serializers.SerializerMethodField()
+    approximate_longitude = serializers.SerializerMethodField()
+    is_approximate_location = serializers.SerializerMethodField()
 
     class Meta:
         model = Property
         fields = [
             'id', 'title', 'description', 'location', 
-            'address', 'city', 'neighborhood', 'province', 'district', 'country', 'zip_code', 'latitude', 'longitude',
+            'address', 'city', 'neighborhood', 'province', 'district', 'country', 'zip_code', 
+            'latitude', 'longitude', 'approximate_latitude', 'approximate_longitude', 'is_approximate_location',
             'price', 'currency', 'condominium_fee', 'ipra', 'iptu', 'monthly_expenses',
             'type', 'status', 'legal_status',
             'bedrooms', 'suites', 'bathrooms', 'toilets', 
@@ -45,6 +51,21 @@ class PropertySerializer(serializers.ModelSerializer):
             'amenities', 'agent', 'agent_id', 'images', 'documents', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'view_count']
+    
+    def get_approximate_latitude(self, obj):
+        """Retorna latitude aproximada se não houver coordenadas exatas"""
+        lat, lon, is_approx = obj.get_approximate_coordinates()
+        return lat if is_approx else None
+    
+    def get_approximate_longitude(self, obj):
+        """Retorna longitude aproximada se não houver coordenadas exatas"""
+        lat, lon, is_approx = obj.get_approximate_coordinates()
+        return lon if is_approx else None
+    
+    def get_is_approximate_location(self, obj):
+        """Indica se as coordenadas são aproximadas (baseadas em geocodificação)"""
+        lat, lon, is_approx = obj.get_approximate_coordinates()
+        return is_approx
 
 class EvaluationRequestSerializer(serializers.ModelSerializer):
     class Meta:

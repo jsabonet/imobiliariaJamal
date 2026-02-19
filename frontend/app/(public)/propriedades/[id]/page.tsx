@@ -112,6 +112,9 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           agent,
           latitude: data.latitude ? Number(data.latitude) : null,
           longitude: data.longitude ? Number(data.longitude) : null,
+          approximateLatitude: data.approximate_latitude ? Number(data.approximate_latitude) : null,
+          approximateLongitude: data.approximate_longitude ? Number(data.approximate_longitude) : null,
+          isApproximateLocation: data.is_approximate_location || false,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
         };
@@ -724,7 +727,14 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               <div className="p-6">
                 <h2 className="text-2xl font-bold text-secondary mb-4">Localização</h2>
                 <p className="text-gray-600 mb-4">{property.location}</p>
-                <MapPlaceholder latitude={property.latitude} longitude={property.longitude} height={400} />
+                <MapPlaceholder 
+                  latitude={property.latitude} 
+                  longitude={property.longitude} 
+                  approximateLatitude={property.approximateLatitude}
+                  approximateLongitude={property.approximateLongitude}
+                  isApproximateLocation={property.isApproximateLocation}
+                  height={400} 
+                />
               </div>
             </Card>
           </div>
