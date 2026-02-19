@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, memo } from 'react';
 import { FiMapPin, FiExternalLink, FiInfo } from 'react-icons/fi';
 
 type MapPlaceholderProps = {
@@ -13,7 +13,7 @@ type MapPlaceholderProps = {
   className?: string;
 };
 
-export default function MapPlaceholder({ 
+const MapPlaceholder = memo(function MapPlaceholder({ 
   latitude, 
   longitude, 
   approximateLatitude, 
@@ -128,5 +128,7 @@ export default function MapPlaceholder({
       <p className="text-xs text-gray-400 mt-1">Coordenadas não fornecidas</p>
     </div>
   );
-}
+});
+
+export default MapPlaceholder;
 
