@@ -163,8 +163,12 @@ class Property(models.Model):
         Usa geocodificação com OpenStreetMap Nominatim.
         Retorna tupla (latitude, longitude, is_approximate) ou (None, None, False)
         """
+        import logging
+        logger = logging.getLogger(__name__)
+        
         # Se já tem coordenadas exatas, retorná-las
         if self.latitude and self.longitude:
+            logger.info(f"[Geocode] Property {self.id} já tem coordenadas: {self.latitude}, {self.longitude}")
             return (float(self.latitude), float(self.longitude), False)
         
         # Tentar geocodificar com informações de localização disponíveis
@@ -189,10 +193,12 @@ class Property(models.Model):
                 address_parts.append(self.country)
             
             if not address_parts:
+                logger.warning(f"[Geocode] Property {self.id} sem informações de endereço")
                 return (None, None, False)
             
             # Criar string de endereço
             address_string = ", ".join(address_parts)
+            logger.info(f"[Geocode] Property {self.id} - Tentando geocodificar: {address_string}")
             
             # Tentar geocodificar (com retry para evitar rate limiting)
             max_retries = 2
@@ -200,21 +206,26 @@ class Property(models.Model):
                 try:
                     location = geolocator.geocode(address_string)
                     if location:
+                        logger.info(f"[Geocode] Property {self.id} - Sucesso! Coords: {location.latitude}, {location.longitude}")
                         return (location.latitude, location.longitude, True)
+                    logger.warning(f"[Geocode] Property {self.id} - Nominatim não encontrou o endereço")
                     break
-                except GeocoderTimedOut:
+                except GeocoderTimedOut as e:
+                    logger.warning(f"[Geocode] Property {self.id} - Timeout (tentativa {attempt+1}/{max_retries})")
                     if attempt < max_retries - 1:
                         time.sleep(1)
                     continue
-                except Exception:
+                except Exception as e:
+                    logger.error(f"[Geocode] Property {self.id} - Erro: {str(e)}")
                     break
             
             return (None, None, False)
             
-        except ImportError:
-            # Se geopy não estiver instalado, retornar None
+        except ImportError as e:
+            logger.error(f"[Geocode] Property {self.id} - geopy não instalado: {str(e)}")
             return (None, None, False)
-        except Exception:
+        except Exception as e:
+            logger.error(f"[Geocode] Property {self.id} - Erro inesperado: {str(e)}")
             return (None, None, False)
 
 
