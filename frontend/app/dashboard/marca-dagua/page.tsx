@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { API_BASE_URL } from '@/lib/api-config';
 
 interface WatermarkedImage {
   id: number;
@@ -14,7 +12,6 @@ interface WatermarkedImage {
 }
 
 export default function MarcaDaguaPage() {
-  const router = useRouter();
   const [images, setImages] = useState<WatermarkedImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -22,21 +19,13 @@ export default function MarcaDaguaPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   useEffect(() => {
-    checkAuth();
     loadImages();
   }, []);
-
-  const checkAuth = async () => {
-    const res = await fetch('/api/admin/check-auth');
-    if (!res.ok) {
-      router.push('/admin/login');
-    }
-  };
 
   const loadImages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/admin/watermark/list/`, {
+      const response = await fetch('/api/admin/watermark/list/', {
         credentials: 'include'
       });
       
@@ -97,7 +86,7 @@ export default function MarcaDaguaPage() {
           const formData = new FormData();
           formData.append('image', file);
 
-          const response = await fetch(`${API_BASE_URL}/admin/watermark/upload/`, {
+          const response = await fetch('/api/admin/watermark/upload/', {
             method: 'POST',
             body: formData,
             credentials: 'include'
@@ -144,7 +133,7 @@ export default function MarcaDaguaPage() {
     if (!confirm('Tem certeza que deseja deletar esta imagem?')) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/watermark/${imageId}/delete/`, {
+      const response = await fetch(`/api/admin/watermark/${imageId}/delete/`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -175,7 +164,7 @@ export default function MarcaDaguaPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-4 md:p-6 lg:p-8">
+      <div className="p-4 md:p-6 lg:p-8" suppressHydrationWarning>
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="bg-primary text-white rounded-xl p-6 md:p-8 shadow-lg">
