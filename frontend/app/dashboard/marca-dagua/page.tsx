@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { API_BASE_URL } from '@/lib/api-config';
 
@@ -13,6 +14,7 @@ interface WatermarkedImage {
 }
 
 export default function MarcaDaguaPage() {
+  const router = useRouter();
   const [images, setImages] = useState<WatermarkedImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -20,8 +22,16 @@ export default function MarcaDaguaPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   useEffect(() => {
+    checkAuth();
     loadImages();
   }, []);
+
+  const checkAuth = async () => {
+    const res = await fetch('/api/admin/check-auth');
+    if (!res.ok) {
+      router.push('/admin/login');
+    }
+  };
 
   const loadImages = async () => {
     try {
@@ -171,7 +181,7 @@ export default function MarcaDaguaPage() {
           <div className="bg-primary text-white rounded-xl p-6 md:p-8 shadow-lg">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">💧 Marca D&apos;água</h1>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">💧 Marca D'água</h1>
                 <p className="text-primary-50 text-sm md:text-base">
                   {images.length} {images.length === 1 ? 'imagem processada' : 'imagens processadas'} • Auto-delete em 2h
                 </p>
@@ -322,7 +332,7 @@ export default function MarcaDaguaPage() {
               <span className="text-lg">2️⃣</span>
               <div>
                 <p className="font-medium text-gray-900">Processamento</p>
-                <p className="text-gray-600 text-xs">Marca d&apos;água aplicada</p>
+                <p className="text-gray-600 text-xs">Marca d'água aplicada</p>
               </div>
             </div>
             <div className="flex gap-2">

@@ -53,13 +53,13 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
       {/* Navigation - Rolável */}
       <nav className="flex-1 p-4 lg:p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-white/10">
-        <ul className="space-y-2" suppressHydrationWarning>
+        <ul className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             
             return (
-              <li key={item.href} suppressHydrationWarning>
+              <li key={item.href}>
                 <Link
                   href={item.href}
                   onClick={handleLinkClick}
