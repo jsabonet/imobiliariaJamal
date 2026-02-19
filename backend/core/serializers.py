@@ -33,6 +33,17 @@ class PropertySerializer(serializers.ModelSerializer):
     approximate_longitude = serializers.SerializerMethodField()
     is_approximate_location = serializers.SerializerMethodField()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._coords_cache = {}
+
+    def _get_cached_coords(self, obj):
+        """Cache para evitar múltiplas chamadas de geocoding por objeto"""
+        obj_id = id(obj)
+        if obj_id not in self._coords_cache:
+            self._coords_cache[obj_id] = obj.get_approximate_coordinates()
+        return self._coords_cache[obj_id]
+
     class Meta:
         model = Property
         fields = [
@@ -54,17 +65,17 @@ class PropertySerializer(serializers.ModelSerializer):
     
     def get_approximate_latitude(self, obj):
         """Retorna latitude aproximada se não houver coordenadas exatas"""
-        lat, lon, is_approx = obj.get_approximate_coordinates()
+        lat, lon, is_approx = self._get_cached_coords(obj)
         return lat if is_approx else None
     
     def get_approximate_longitude(self, obj):
         """Retorna longitude aproximada se não houver coordenadas exatas"""
-        lat, lon, is_approx = obj.get_approximate_coordinates()
+        lat, lon, is_approx = self._get_cached_coords(obj)
         return lon if is_approx else None
     
     def get_is_approximate_location(self, obj):
         """Indica se as coordenadas são aproximadas (baseadas em geocodificação)"""
-        lat, lon, is_approx = obj.get_approximate_coordinates()
+        lat, lon, is_approx = self._get_cached_coords(obj)
         return is_approx
 
 class EvaluationRequestSerializer(serializers.ModelSerializer):

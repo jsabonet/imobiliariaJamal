@@ -200,6 +200,9 @@ class Property(models.Model):
             address_string = ", ".join(address_parts)
             logger.info(f"[Geocode] Property {self.id} - Tentando geocodificar: {address_string}")
             
+            # Nominatim tem rate limit de 1 req/segundo - adicionar delay
+            time.sleep(1.5)
+            
             # Tentar geocodificar (com retry para evitar rate limiting)
             max_retries = 2
             for attempt in range(max_retries):
