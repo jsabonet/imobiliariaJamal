@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FiMapPin, FiExternalLink, FiInfo } from 'react-icons/fi';
 
 type MapPlaceholderProps = {
@@ -28,14 +28,33 @@ export default function MapPlaceholder({
     setIsMounted(true);
   }, []);
 
-  // Determinar qual conjunto de coordenadas usar
-  const exactCoords = typeof latitude === 'number' && typeof longitude === 'number';
-  const approxCoords = typeof approximateLatitude === 'number' && typeof approximateLongitude === 'number';
-  
-  const hasCoords = exactCoords || approxCoords;
-  const lat = exactCoords ? (latitude as number) : (approximateLatitude as number);
-  const lon = exactCoords ? (longitude as number) : (approximateLongitude as number);
-  const isApprox = !exactCoords && approxCoords;
+  // Memoizar cálculos de coordenadas para evitar re-renders
+  const coords = useMemo(() => {
+    const exactCoords = typeof latitude === 'number' && typeof longitude === 'number' && !isNaN(latitude) && !isNaN(longitude);
+    const approxCoords = typeof approximateLatitude === 'number' && typeof approximateLongitude === 'number' && !isNaN(approximateLatitude) && !isNaN(approximateLongitude);
+    
+    const hasCoords = exactCoords || approxCoords;
+    const lat = exactCoords ? latitude : approximateLatitude;
+    const lon = exactCoords ? longitude : approximateLongitude;
+    const isApprox = !exactCoords && approxCoords;
+    
+    return { hasCoords, lat, lon, isApprox };
+  }, [latitude, longitude, approximateLatitude, approximateLongitude]);
+
+  // Memoizar URLs do mapa
+  const mapUrls = useMemo(() => {
+    if (!coords.hasCoords || coords.lat === null || coords.lon === null || coords.lat === undefined || coords.lon === undefined) {
+      return null;
+    }
+    
+    const lat = coords.lat as number;
+    const lon = coords.lon as number;
+    const zoom = coords.isApprox ? 14 : 15;
+    const src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.01}%2C${lat - 0.01}%2C${lon + 0.01}%2C${lat + 0.01}&layer=mapnik&marker=${lat}%2C${lon}`;
+    const link = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
+    
+    return { src, link, zoom };
+  }, [coords]);
 
   // Não renderizar iframe até estar montado no cliente
   if (!isMounted) {
@@ -49,16 +68,11 @@ export default function MapPlaceholder({
     );
   }
 
-  if (hasCoords) {
-    // Ajustar zoom baseado no tipo de localização
-    const zoom = isApprox ? 14 : 15; // Zoom menor para localização aproximada
-    const src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.01}%2C${lat - 0.01}%2C${lon + 0.01}%2C${lat + 0.01}&layer=mapnik&marker=${lat}%2C${lon}`;
-    const link = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
-    
+  if (coords.hasCoords && mapUrls) {
     return (
       <div className={`w-full ${className}`}>
         {/* Aviso de localização aproximada */}
-        {isApprox && (
+        {coords.isApprox && (
           <div className="mb-3 flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
             <FiInfo className="text-amber-600 flex-shrink-0 mt-0.5" size={18} />
             <div className="text-sm text-amber-800">
@@ -72,27 +86,29 @@ export default function MapPlaceholder({
         
         <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm" style={{ height }}>
           <iframe
+            key={`map-${coords.lat}-${coords.lon}`}
             title="Mapa da Propriedade"
             width="100%"
             height="100%"
             frameBorder="0"
             scrolling="no"
-            src={src}
+            src={mapUrls.src}
+            loading="lazy"
             className="w-full h-full"
           />
         </div>
         
         <div className="mt-3 flex items-center justify-between text-sm">
           <div className="flex items-center gap-2 text-gray-600">
-            <FiMapPin size={16} className={isApprox ? "text-amber-500" : "text-primary"} />
+            <FiMapPin size={16} className={coords.isApprox ? "text-amber-500" : "text-primary"} />
             <span>
               <span className="font-medium">
-                {isApprox ? 'Área aproximada' : 'Coordenadas'}:
-              </span> {lat.toFixed(6)}, {lon.toFixed(6)}
+                {coords.isApprox ? 'Área aproximada' : 'Coordenadas'}:
+              </span> {coords.lat?.toFixed(6)}, {coords.lon?.toFixed(6)}
             </span>
           </div>
           <a 
-            href={link} 
+            href={mapUrls.link} 
             target="_blank" 
             rel="noopener noreferrer" 
             className="flex items-center gap-1 text-primary hover:text-primary-600 font-medium transition"
