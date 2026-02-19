@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiMapPin, FiExternalLink, FiInfo } from 'react-icons/fi';
 
 type MapPlaceholderProps = {
@@ -22,6 +22,12 @@ export default function MapPlaceholder({
   height = 256, 
   className = '' 
 }: MapPlaceholderProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Determinar qual conjunto de coordenadas usar
   const exactCoords = typeof latitude === 'number' && typeof longitude === 'number';
   const approxCoords = typeof approximateLatitude === 'number' && typeof approximateLongitude === 'number';
@@ -30,6 +36,18 @@ export default function MapPlaceholder({
   const lat = exactCoords ? (latitude as number) : (approximateLatitude as number);
   const lon = exactCoords ? (longitude as number) : (approximateLongitude as number);
   const isApprox = !exactCoords && approxCoords;
+
+  // Não renderizar iframe até estar montado no cliente
+  if (!isMounted) {
+    return (
+      <div className={`w-full rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center ${className}`} style={{ height }}>
+        <div className="animate-pulse flex flex-col items-center">
+          <FiMapPin size={48} className="mb-3 text-gray-400" />
+          <p className="text-sm text-gray-500">Carregando mapa...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (hasCoords) {
     // Ajustar zoom baseado no tipo de localização
