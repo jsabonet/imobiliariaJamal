@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { API_BASE_URL } from '@/lib/api-config';
 
@@ -14,7 +13,6 @@ interface WatermarkedImage {
 }
 
 export default function MarcaDaguaPage() {
-  const router = useRouter();
   const [images, setImages] = useState<WatermarkedImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
