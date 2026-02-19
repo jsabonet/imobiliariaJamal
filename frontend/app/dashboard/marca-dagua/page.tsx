@@ -22,16 +22,8 @@ export default function MarcaDaguaPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   useEffect(() => {
-    checkAuth();
     loadImages();
   }, []);
-
-  const checkAuth = async () => {
-    const res = await fetch('/api/admin/check-auth');
-    if (!res.ok) {
-      router.push('/admin/login');
-    }
-  };
 
   const loadImages = async () => {
     try {
