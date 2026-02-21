@@ -1,23 +1,52 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
-  skipTrailingSlashRedirect: true,
+  trailingSlash: true,
   
   // Proxy API requests para o backend Django
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    // NEXT_PUBLIC_API_URL pode incluir /api (ex: http://localhost:8000/api)
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api').replace(/\/$/, '');
+    // URL base sem /api para media e static
+    const backendBaseUrl = apiUrl.endsWith('/api') ? apiUrl.slice(0, -4) : apiUrl;
     return [
+      // Endpoints de marca d'água precisam SEMPRE chegar com barra final no Django
+      {
+        source: '/api/admin/watermark/upload',
+        destination: `${apiUrl}/admin/watermark/upload/`,
+      },
+      {
+        source: '/api/admin/watermark/upload/',
+        destination: `${apiUrl}/admin/watermark/upload/`,
+      },
+      {
+        source: '/api/admin/watermark/list',
+        destination: `${apiUrl}/admin/watermark/list/`,
+      },
+      {
+        source: '/api/admin/watermark/list/',
+        destination: `${apiUrl}/admin/watermark/list/`,
+      },
+      {
+        source: '/api/admin/watermark/:id/delete',
+        destination: `${apiUrl}/admin/watermark/:id/delete/`,
+      },
+      {
+        source: '/api/admin/watermark/:id/delete/',
+        destination: `${apiUrl}/admin/watermark/:id/delete/`,
+      },
+      // Regra geral para o restante da API
       {
         source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`,
+        destination: `${apiUrl}/:path*`,
       },
       {
         source: '/media/:path*',
-        destination: `${backendUrl}/media/:path*`,
+        destination: `${backendBaseUrl}/media/:path*`,
       },
       {
         source: '/static/:path*',
-        destination: `${backendUrl}/static/:path*`,
+        destination: `${backendBaseUrl}/static/:path*`,
       },
     ];
   },

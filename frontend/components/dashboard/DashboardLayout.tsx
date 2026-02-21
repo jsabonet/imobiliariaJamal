@@ -23,9 +23,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50" suppressHydrationWarning>
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Mobile Menu Toggle - Botão Lateral Profissional */}
       <button
+        suppressHydrationWarning
         type="button"
         onClick={toggleSidebar}
         onTouchEnd={toggleSidebar}

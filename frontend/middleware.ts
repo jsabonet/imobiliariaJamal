@@ -26,5 +26,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/login', '/api/admin/:path*'],
+  // Nota: /api/admin/:path* foi removido intencionalmente.
+  // O middleware interceptava essas rotas e o NextResponse.next() normalizava
+  // o URL removendo a barra final, quebrando os rewrites para o Django.
+  matcher: ['/dashboard/:path*', '/admin/login'],
 };

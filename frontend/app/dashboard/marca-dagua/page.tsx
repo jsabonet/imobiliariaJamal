@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 interface WatermarkedImage {
@@ -25,7 +25,7 @@ export default function MarcaDaguaPage() {
   const loadImages = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/watermark/list/', {
+      const response = await fetch('/api/admin/watermark/list', {
         credentials: 'include'
       });
       
@@ -40,127 +40,91 @@ export default function MarcaDaguaPage() {
       setLoading(false);
     }
   };
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const fileArray = Array.from(files);
-    const validFiles: File[] = [];
-    const errors: string[] = [];
+    const valid: File[] = [];
+    const rejected: string[] = [];
 
-    // Validar todos os arquivos primeiro
     for (const file of fileArray) {
-      if (!file.type.startsWith('image/')) {
-        errors.push(`${file.name}: tipo inválido`);
-        continue;
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        errors.push(`${file.name}: maior que 10MB`);
-        continue;
-      }
-      validFiles.push(file);
+      if (!file.type.startsWith('image/')) { rejected.push(`${file.name}: tipo inválido`); continue; }
+      if (file.size > 10 * 1024 * 1024) { rejected.push(`${file.name}: maior que 10MB`); continue; }
+      valid.push(file);
     }
 
-    if (errors.length > 0) {
-      setMessage({ type: 'error', text: `Arquivos rejeitados: ${errors.join(', ')}` });
-      if (validFiles.length === 0) {
-        e.target.value = '';
-        return;
-      }
+    if (rejected.length > 0) {
+      setMessage({ type: 'error', text: `Rejeitados: ${rejected.join(', ')}` });
     }
 
-    try {
-      setUploading(true);
-      setMessage(null);
-      
-      let successCount = 0;
-      let failCount = 0;
+    if (valid.length === 0) {
+      e.target.value = '';
+      return;
+    }
 
-      // Processar cada arquivo sequencialmente
-      for (let i = 0; i < validFiles.length; i++) {
-        const file = validFiles[i];
-        setUploadProgress({ current: i + 1, total: validFiles.length });
+    setUploading(true);
+    setMessage(null);
 
-        try {
-          const formData = new FormData();
-          formData.append('image', file);
+    let successCount = 0;
+    let failCount = 0;
+    setUploadProgress({ current: 0, total: valid.length });
 
-          const response = await fetch('/api/admin/watermark/upload/', {
-            method: 'POST',
-            body: formData,
-            credentials: 'include'
-          });
-
-          const data = await response.json();
-
-          if (data.success) {
-            successCount++;
-          } else {
-            failCount++;
-          }
-        } catch (error) {
-          failCount++;
-        }
-      }
-
-      // Mensagem final
-      if (successCount > 0 && failCount === 0) {
-        setMessage({ 
-          type: 'success', 
-          text: `✅ ${successCount} ${successCount === 1 ? 'imagem processada' : 'imagens processadas'} com sucesso!` 
+    for (let i = 0; i < valid.length; i++) {
+      try {
+        const formData = new FormData();
+        formData.append('image', valid[i]);
+        const response = await fetch('/api/admin/watermark/upload', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
         });
-      } else if (successCount > 0 && failCount > 0) {
-        setMessage({ 
-          type: 'success', 
-          text: `⚠️ ${successCount} processadas, ${failCount} falharam` 
-        });
-      } else {
-        setMessage({ type: 'error', text: 'Erro ao processar imagens' });
+        const data = await response.json();
+        if (data.success) successCount++; else failCount++;
+      } catch {
+        failCount++;
       }
-
-      loadImages(); // Recarregar lista
-      e.target.value = ''; // Limpar input
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Erro ao enviar imagens' });
-    } finally {
-      setUploading(false);
-      setUploadProgress(null);
+      setUploadProgress({ current: i + 1, total: valid.length });
     }
+
+    if (successCount > 0 && failCount === 0) {
+      setMessage({ type: 'success', text: `✅ ${successCount} ${successCount === 1 ? 'imagem processada' : 'imagens processadas'} com sucesso!` });
+    } else if (successCount > 0) {
+      setMessage({ type: 'success', text: `⚠️ ${successCount} processadas, ${failCount} falharam` });
+    } else {
+      setMessage({ type: 'error', text: 'Erro ao processar imagens' });
+    }
+
+    await loadImages();
+    setUploading(false);
+    setUploadProgress(null);
+    e.target.value = '';
   };
 
   const handleDelete = async (imageId: number) => {
     if (!confirm('Tem certeza que deseja deletar esta imagem?')) return;
-
     try {
-      const response = await fetch(`/api/admin/watermark/${imageId}/delete/`, {
-        method: 'DELETE',
-        credentials: 'include'
+      const response = await fetch(`/api/admin/watermark/${imageId}/delete`, {
+        method: 'DELETE', credentials: 'include',
       });
-
       const data = await response.json();
-
-      if (data.success) {
-        setMessage({ type: 'success', text: 'Imagem deletada com sucesso' });
-        loadImages();
-      } else {
-        setMessage({ type: 'error', text: data.message || 'Erro ao deletar' });
-      }
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Erro ao deletar imagem' });
-    }
+      if (data.success) { setMessage({ type: 'success', text: 'Imagem deletada com sucesso' }); loadImages(); }
+      else setMessage({ type: 'error', text: data.message || 'Erro ao deletar' });
+    } catch { setMessage({ type: 'error', text: 'Erro ao deletar imagem' }); }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString('pt-MZ', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+  const handleDownloadAll = () => {
+    images.forEach(image => {
+      const a = document.createElement('a');
+      a.href = image.watermarked_url; a.download = image.original_filename; a.click();
     });
   };
+
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleString('pt-MZ', {
+      day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    });
 
   return (
     <DashboardLayout>
@@ -208,7 +172,7 @@ export default function MarcaDaguaPage() {
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={handleUpload}
+                onChange={handleFileInput}
                 disabled={uploading}
                 className="hidden"
                 id="image-upload"

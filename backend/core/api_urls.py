@@ -9,6 +9,9 @@ from .views import (
 from .auth_views import admin_auth
 from .agents_views import agents_list, agent_detail, agent_reset_password
 
+# The DefaultRouter and all paths use trailing slashes.
+# Next.js is configured with skipTrailingSlashRedirect: true so it never strips
+# trailing slashes before proxying, avoiding the redirect loop with APPEND_SLASH.
 router = DefaultRouter()
 router.register(r'properties', PropertyViewSet, basename='property')
 router.register(r'property-images', PropertyImageViewSet, basename='property-image')
