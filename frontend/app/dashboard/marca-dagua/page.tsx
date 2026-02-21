@@ -25,7 +25,7 @@ export default function MarcaDaguaPage() {
   const loadImages = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/watermark/list', {
+      const response = await fetch('/api/admin/watermark/list/', {
         credentials: 'include'
       });
       
@@ -75,7 +75,7 @@ export default function MarcaDaguaPage() {
       try {
         const formData = new FormData();
         formData.append('image', valid[i]);
-        const response = await fetch('/api/admin/watermark/upload', {
+        const response = await fetch('/api/admin/watermark/upload/', {
           method: 'POST',
           body: formData,
           credentials: 'include',
@@ -105,7 +105,7 @@ export default function MarcaDaguaPage() {
   const handleDelete = async (imageId: number) => {
     if (!confirm('Tem certeza que deseja deletar esta imagem?')) return;
     try {
-      const response = await fetch(`/api/admin/watermark/${imageId}/delete`, {
+      const response = await fetch(`/api/admin/watermark/${imageId}/delete/`, {
         method: 'DELETE', credentials: 'include',
       });
       const data = await response.json();
