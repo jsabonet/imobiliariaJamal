@@ -12,6 +12,7 @@ import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
 import MapPlaceholder from '@/components/ui/MapPlaceholder';
 import PropertyCard from '@/components/properties/PropertyCard';
+import LazyRecommendedSection from '@/components/properties/LazyRecommendedSection';
 import PropertySchema from '@/components/seo/PropertySchema';
 import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import DynamicSEO from '@/components/seo/DynamicSEO';
@@ -435,6 +436,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   alt={`${property.title} - ${index + 1}`}
                   fill
                   className="object-cover"
+                  loading={index < 5 ? 'eager' : 'lazy'}
+                  priority={index === 0}
                 />
               </button>
             ))}
@@ -917,40 +920,13 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           </div>
         </div>
         
-        {/* Propriedades Recomendadas */}
-        {recommendedProperties.length > 0 && (
-          <div className="mt-12">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-secondary">
-                Propriedades Similares
-              </h2>
-              <Link 
-                href="/propriedades" 
-                className="text-primary hover:text-primary-dark flex items-center gap-2 font-medium"
-              >
-                Ver Todas
-                <FiArrowRight className="text-lg" />
-              </Link>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recommendedProperties.map((recommendedProp) => (
-                <PropertyCard key={recommendedProp.id} property={recommendedProp} />
-              ))}
-            </div>
-            
-            <div className="mt-8 text-center">
-              <p className="text-sm text-gray-600 mb-4">
-                Não encontrou o que procure? Temos mais opções para você!
-              </p>
-              <Link href="/propriedades">
-                <Button variant="outline">
-                  Explorar Todas as Propriedades
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
+        {/* Propriedades Recomendadas - Lazy Loaded */}
+        <LazyRecommendedSection 
+          currentProperty={property}
+          loadRecommendedProperties={loadRecommendedProperties}
+          recommendedProperties={recommendedProperties}
+          loadingRecommended={loadingRecommended}
+        />
       </div>
     </div>
   );

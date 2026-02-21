@@ -34,4 +34,4 @@ USER django
 ENV DJANGO_SETTINGS_MODULE=ijps_api.settings
 EXPOSE 8000
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["gunicorn", "ijps_api.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120"]
+CMD ["gunicorn", "ijps_api.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "120"]

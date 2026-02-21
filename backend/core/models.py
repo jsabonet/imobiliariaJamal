@@ -434,3 +434,54 @@ class TemporaryWatermarkedImage(models.Model):
         from datetime import timedelta
         expiry_time = self.created_at + timedelta(hours=2)
         return timezone.now() > expiry_time
+
+
+# ===========================
+# Django Signals para Auto-Cleanup de Imagens
+# ===========================
+from django.db.models.signals import pre_save, post_delete
+from django.dispatch import receiver
+import os
+
+
+@receiver(pre_save, sender=PropertyImage)
+def delete_old_image_on_update(sender, instance, **kwargs):
+    """Remove arquivo antigo quando imagem é atualizada
+    
+    Este signal previne a multiplicação de imagens órfãs ao substituir
+    uma imagem. Quando o campo 'image' é atualizado, o arquivo anterior
+    é automaticamente removido do disco.
+    """
+    if not instance.pk:
+        return  # Novo objeto, nada para remover
+    
+    try:
+        old_image = PropertyImage.objects.get(pk=instance.pk).image
+        # Verifica se a imagem mudou
+        if old_image and old_image != instance.image:
+            if os.path.isfile(old_image.path):
+                os.remove(old_image.path)
+                print(f"🗑️  Auto-cleanup: removido {os.path.basename(old_image.path)}")
+    except PropertyImage.DoesNotExist:
+        pass  # Objeto foi deletado, ignorar
+    except Exception as e:
+        # Log mas não falha o save
+        print(f"⚠️  Aviso: Erro ao remover imagem antiga: {e}")
+
+
+@receiver(post_delete, sender=PropertyImage)
+def delete_image_on_record_delete(sender, instance, **kwargs):
+    """Remove arquivo quando registro é deletado
+    
+    Este signal garante que quando um registro PropertyImage é deletado
+    do banco de dados, o arquivo correspondente também é removido do disco,
+    evitando arquivos órfãos.
+    """
+    if instance.image:
+        try:
+            if os.path.isfile(instance.image.path):
+                os.remove(instance.image.path)
+                print(f"🗑️  Auto-cleanup: removido {os.path.basename(instance.image.path)}")
+        except Exception as e:
+            # Log mas não falha o delete
+            print(f"⚠️  Aviso: Erro ao remover arquivo de imagem: {e}")
