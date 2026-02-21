@@ -156,5 +156,5 @@ if VAPID_PRIVATE_KEY:
 VAPID_CLAIMS_EMAIL = os.getenv('VAPID_CLAIMS_EMAIL', 'mailto:contato@imobiliariajamal.com')
 
 # Sistema de Marca d'Água
-# Desativado temporariamente para restauração de imagens originais
-ENABLE_WATERMARK = os.getenv('ENABLE_WATERMARK', 'False') == 'True'
+# Ativado por padrão; pode ser desligado com ENABLE_WATERMARK=False no .env
+ENABLE_WATERMARK = os.getenv('ENABLE_WATERMARK', 'True') == 'True'
