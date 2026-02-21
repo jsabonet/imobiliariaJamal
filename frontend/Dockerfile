@@ -14,6 +14,8 @@ ENV NODE_ENV=production
 # ARG para permitir override via docker-compose
 ARG NEXT_PUBLIC_API_URL=https://imobiliariajamal.com/api
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
 RUN npm run build
 
 FROM node:20-alpine AS runner
